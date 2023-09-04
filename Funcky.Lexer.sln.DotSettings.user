@@ -2,5 +2,7 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1cac4a85_002D2acc_002D4e54_002Db1fa_002Db783debbeaa1/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="DefineLexerApi" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::1C2EB820-5603-4920-AE34-A6491124A367::net7.0::Funcky.Lexer.Test.DefineLexerApi&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::1C2EB820-5603-4920-AE34-A6491124A367::net7.0::Polyadic.Lexer.Test.ArithmeticParser.LexerTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::1C2EB820-5603-4920-AE34-A6491124A367::net7.0::Polyadic.Lexer.Test.PositionWithLinesTest&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

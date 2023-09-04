@@ -45,6 +45,7 @@ public class LexerRuleBook
             lexmes = lexmes.Add(FindNextLexeme(reader, lexmes));
         }
 
+        // Todo: old implementation allowed postprocessing tokens here...
         return new LexerResult(lexmes, _newLexemeWalker(lexmes, _newEpsilonToken));
     }
 

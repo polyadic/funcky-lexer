@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
+using Funcky.Lexer.Test.Tokens;
 
-namespace Funcky.Lexer.Test;
+namespace Funcky.Lexer.Test.Api;
 
 public class DefineLexerApi
 {
@@ -18,7 +19,7 @@ public class DefineLexerApi
             .AddSimpleRule<MinusToken>("-")
             .AddSimpleRule<PlusToken>("+")
             .AddSimpleRule<MultiplicationToken>("*")
-            .AddSimpleRule<DivideToken>("/")
+            .AddSimpleRule<DivisionToken>("/")
             .Build()
             .Scan("40+20*6");
 
