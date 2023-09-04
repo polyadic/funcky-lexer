@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34018.315
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Funcky.Lexer", "Funcky.Lexer\Funcky.Lexer.csproj", "{9A8F7ADF-D369-4390-A2A7-358896C5BD90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Funcky.Lexer.Test", "Funcky.Lexer.Test\Funcky.Lexer.Test.csproj", "{1C2EB820-5603-4920-AE34-A6491124A367}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9A8F7ADF-D369-4390-A2A7-358896C5BD90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A8F7ADF-D369-4390-A2A7-358896C5BD90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A8F7ADF-D369-4390-A2A7-358896C5BD90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A8F7ADF-D369-4390-A2A7-358896C5BD90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C2EB820-5603-4920-AE34-A6491124A367}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C2EB820-5603-4920-AE34-A6491124A367}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C2EB820-5603-4920-AE34-A6491124A367}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C2EB820-5603-4920-AE34-A6491124A367}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F97AA487-740B-4294-9024-20F21A241F32}
+	EndGlobalSection
+EndGlobal
