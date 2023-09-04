@@ -1,3 +1,3 @@
-﻿using Funcky.Lexer;
+﻿using Funcky.Lexer.Token;
 
-public record EpsilonToken : IToken;
+public record EpsilonToken : IEpsilonToken;

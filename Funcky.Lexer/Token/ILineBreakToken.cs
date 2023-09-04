@@ -1,4 +1,4 @@
-﻿namespace Funcky.Lexer;
+﻿namespace Funcky.Lexer.Token;
 
 public interface ILineBreakToken : IToken
 {

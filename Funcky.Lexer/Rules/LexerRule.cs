@@ -2,17 +2,17 @@
 using Funcky.Monads;
 using static Funcky.Functional;
 
-namespace Funcky.Lexer;
+namespace Funcky.Lexer.Rules;
 
 internal sealed class LexerRule : ILexerRule
 {
-    public LexerRule(Predicate<char> predicate, Func<ILexemeBuilder, Lexeme> createToken, int weight)
+    public LexerRule(Predicate<char> predicate, Lexeme.Factory createToken, int weight)
         => (Predicate, CreateToken, Weight)
             = (predicate, createToken, weight);
 
     public Predicate<char> Predicate { get; }
 
-    public Func<ILexemeBuilder, Lexeme> CreateToken { get; }
+    public Lexeme.Factory CreateToken { get; }
 
     public int Weight { get; }
 
@@ -26,5 +26,5 @@ internal sealed class LexerRule : ILexerRule
 
     private Option<bool> ApplyPredicate(ILexemeBuilder builder)
         => from nextCharacter in builder.Peek()
-            select Predicate(nextCharacter);
+           select Predicate(nextCharacter);
 }

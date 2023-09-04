@@ -1,7 +1,8 @@
 ﻿using System.Text;
+using Funcky.Lexer.Token;
 using Funcky.Monads;
 
-namespace Funcky.Lexer;
+namespace Funcky.Lexer.Default;
 
 internal class LexemeBuilder : ILexemeBuilder
 {
@@ -16,7 +17,6 @@ internal class LexemeBuilder : ILexemeBuilder
         _startPosition = reader.Position;
         _reader = reader;
     }
-
 
     public string CurrentToken
         => _stringBuilder.ToString();

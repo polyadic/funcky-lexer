@@ -1,8 +1,8 @@
 ﻿using Funcky.Monads;
 
-namespace Funcky.Lexer;
+namespace Funcky.Lexer.Default;
 
-public class LexerReader : ILexerReader
+internal class LexerReader : ILexerReader
 {
     private readonly string _expression;
 

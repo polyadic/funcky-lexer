@@ -1,10 +1,14 @@
-﻿using Funcky.Monads;
+﻿using Funcky.Lexer.Default;
+using Funcky.Lexer.Token;
+using Funcky.Monads;
 
 namespace Funcky.Lexer;
 
 public interface ILexemeBuilder
 {
     delegate ILexemeBuilder Factory(ILexerReader lexerReader, ILinePositionCalculator linePositionCalculator);
+
+    static Factory DefaultFactory = (reader, linePositionCalculator) => new LexemeBuilder(reader, linePositionCalculator);
 
     string CurrentToken { get; }
 

@@ -1,4 +1,4 @@
-﻿namespace Funcky.Lexer;
+﻿namespace Funcky.Lexer.Exceptions;
 
 public class LexerException : Exception
 {

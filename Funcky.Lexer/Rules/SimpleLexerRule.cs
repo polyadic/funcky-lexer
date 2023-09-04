@@ -1,8 +1,9 @@
 ﻿using System.Collections.Immutable;
 using Funcky.Extensions;
+using Funcky.Lexer.Token;
 using Funcky.Monads;
 
-namespace Funcky.Lexer;
+namespace Funcky.Lexer.Rules;
 
 internal sealed class SimpleLexerRule<TToken> : ILexerRule
     where TToken : IToken, new()

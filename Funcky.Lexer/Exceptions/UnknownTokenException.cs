@@ -1,6 +1,6 @@
 ﻿using Funcky.Monads;
 
-namespace Funcky.Lexer;
+namespace Funcky.Lexer.Exceptions;
 
 public sealed class UnknownTokenException : LexerException
 {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Immutable;
 
-namespace Funcky.Lexer;
+namespace Funcky.Lexer.Default;
 
-public class LinePositionCalculator : ILinePositionCalculator
+internal class LinePositionCalculator : ILinePositionCalculator
 {
     private readonly ImmutableList<AbsolutePosition> _newLines;
 

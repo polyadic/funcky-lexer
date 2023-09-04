@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Funcky.Monads;
 
-namespace Funcky.Lexer;
+namespace Funcky.Lexer.Rules;
 
 public interface ILexerRule
 {
