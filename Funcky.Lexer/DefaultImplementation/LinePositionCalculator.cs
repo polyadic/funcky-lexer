@@ -14,10 +14,10 @@ internal class LinePositionCalculator : ILinePositionCalculator
 
     public Position CalculateLinePosition(int absolutePosition, int length)
         => new(
-            absolutePosition,
-            ToHumanIndex(LineNumber(absolutePosition)),
-            ToHumanIndex(absolutePosition - FindClosestNewLineBefore(absolutePosition)),
-            length);
+            StartPosition: absolutePosition,
+            Line: ToHumanIndex(LineNumber(absolutePosition)),
+            StartColumn: ToHumanIndex(absolutePosition - FindClosestNewLineBefore(absolutePosition)),
+            Length: length);
 
     private int LineNumber(int position)
         => _newLines

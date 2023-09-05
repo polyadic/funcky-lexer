@@ -8,13 +8,11 @@ public sealed class LexerTest
     [MemberData(nameof(SourceAndExpectedLExemes))]
     public void GivenSymbolsWithOverlappingPrefixesTheLexerGetsTheLongerOne(string expression, List<Lexeme> expectedLexemes)
     {
-        var result = Funcky.Lexer.Test.ArithmeticParser.LexerRules
-            .GetRuleBook()
-            .Scan(expression);
+        var walker = GetLexemeWalker(expression);
 
         foreach (var expectedLexeme in expectedLexemes)
         {
-            Assert.Equal(expectedLexeme, result.Walker.Pop());
+            Assert.Equal(expectedLexeme, walker.Pop());
         }
     }
 
@@ -58,4 +56,9 @@ public sealed class LexerTest
                 }
             },
         };
+
+    private static ILexemeWalker GetLexemeWalker(string expression)
+        => LexerRules.GetRuleBook()
+            .Scan(expression)
+            .Walker;
 }

@@ -21,8 +21,5 @@ public interface ILexerRuleBookBuilder
 
     ILexerRuleBookBuilder WithPostProcess(Func<IEnumerable<Lexeme>, IEnumerable<Lexeme>> postProcess);
 
-    ILexerRuleBookBuilder WithEpsilonToken<TEpsilonToken>()
-        where TEpsilonToken : IEpsilonToken, new();
-
     LexerRuleBook Build();
 }
