@@ -1,13 +1,13 @@
-﻿using Funcky.Lexer.Token;
-using Funcky.Lexer.DefaultImplementation;
+﻿using Funcky.Lexer.DefaultImplementation;
+using Funcky.Lexer.Token;
 
 namespace Funcky.Lexer;
 
 public interface ILexemeWalker
 {
-    delegate ILexemeWalker Factory(IReadOnlyList<Lexeme> lexemes, IEpsilonToken.Factory newEpsilonToken);
+    public static Factory DefaultFactory = (lexemes, newEpsilonToken) => new LexemeWalker(lexemes, newEpsilonToken);
 
-    static Factory DefaultFactory = (lexemes, newEpsilonToken) => new LexemeWalker(lexemes, newEpsilonToken);
+    public delegate ILexemeWalker Factory(IReadOnlyList<Lexeme> lexemes, IEpsilonToken.Factory newEpsilonToken);
 
     Lexeme Pop();
 

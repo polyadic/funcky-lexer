@@ -2,6 +2,5 @@
 
 public interface IEpsilonToken : IToken
 {
-    delegate IEpsilonToken Factory();
-
+    public delegate IEpsilonToken Factory();
 }

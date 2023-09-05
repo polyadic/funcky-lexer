@@ -46,5 +46,4 @@ internal class LexemeBuilder : ILexemeBuilder
 
         return this;
     }
-
 }

@@ -18,9 +18,8 @@ public class LexerRuleBook
 
     private readonly ImmutableList<ILexerRule> _rules;
 
-    public static LexerRuleBookBuilder Builder = new();
-
-    internal LexerRuleBook(ILexerReader.Factory newLexerReader,
+    internal LexerRuleBook(
+        ILexerReader.Factory newLexerReader,
         ILinePositionCalculator.Factory newLinePositionCalculator,
         ILexemeBuilder.Factory newLexemeBuilder,
         ILexemeWalker.Factory newLexemeWalker,
@@ -34,6 +33,8 @@ public class LexerRuleBook
         _newEpsilonToken = newEpsilonToken;
         _rules = rules;
     }
+
+    public static LexerRuleBookBuilder Builder { get; } = new();
 
     public LexerResult Scan(string expression)
     {
@@ -71,5 +72,4 @@ public class LexerRuleBook
 
     private static int GetRuleWeight(ILexerRule rule)
         => rule.Weight;
-
 }

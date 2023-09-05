@@ -5,9 +5,9 @@ namespace Funcky.Lexer;
 
 public interface ILexerReader
 {
-    public delegate ILexerReader Factory(string expression);
-
     public static Factory DefaultFactory = expression => new LexerReader(expression);
+
+    public delegate ILexerReader Factory(string expression);
 
     int Position { get; }
 

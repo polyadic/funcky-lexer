@@ -6,9 +6,9 @@ namespace Funcky.Lexer;
 
 public interface ILexemeBuilder
 {
-    delegate ILexemeBuilder Factory(ILexerReader lexerReader, ILinePositionCalculator linePositionCalculator);
+    public static Factory DefaultFactory = (reader, linePositionCalculator) => new LexemeBuilder(reader, linePositionCalculator);
 
-    static Factory DefaultFactory = (reader, linePositionCalculator) => new LexemeBuilder(reader, linePositionCalculator);
+    public delegate ILexemeBuilder Factory(ILexerReader lexerReader, ILinePositionCalculator linePositionCalculator);
 
     string CurrentToken { get; }
 

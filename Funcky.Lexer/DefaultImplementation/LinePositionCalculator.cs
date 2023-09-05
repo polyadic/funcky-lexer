@@ -35,5 +35,4 @@ internal class LinePositionCalculator : ILinePositionCalculator
     private AbsolutePosition FindClosestNewLineBefore(int position)
         => _newLines
             .LastOrDefault(newLinePosition => newLinePosition.StartPosition < position);
-
 }

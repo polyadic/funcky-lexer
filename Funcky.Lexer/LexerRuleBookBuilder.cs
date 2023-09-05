@@ -30,8 +30,6 @@ public class LexerRuleBookBuilder
         return this;
     }
 
-
-
     public LexerRuleBookBuilder AddRuleWithContext(Predicate<char> symbolPredicate, Predicate<IReadOnlyList<Lexeme>> contextPredicate, Lexeme.Factory createToken, int weight)
     {
         _rules = _rules.Add(new LexerRuleWithContext(symbolPredicate, contextPredicate, createToken, weight));
@@ -77,13 +75,13 @@ public class LexerRuleBookBuilder
             newEpsilonToken: _newEpsilonToken.GetOrElse(NoEpsilonTokenDefined),
             rules: _rules);
 
-    private static IEpsilonToken.Factory NoEpsilonTokenDefined()
-        => throw new LexerException("No epsilon token defined");
-
     public LexerRuleBookBuilder WithLexemeBuilder(ILexemeBuilder.Factory newLexemeBuilder)
     {
         _newLexemeBuilder = newLexemeBuilder;
 
         return this;
     }
+
+    private static IEpsilonToken.Factory NoEpsilonTokenDefined()
+        => throw new LexerException("No epsilon token defined");
 }

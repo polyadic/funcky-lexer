@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Shared NuGet Metadata">
+        <Authors>Polyadic</Authors>
+        <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/polyadic/funcky</PackageProjectUrl>
+        <Copyright>© Polyadic. All rights reserved.</Copyright>
+    </PropertyGroup>
+    <PropertyGroup>
+        <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    </PropertyGroup>
+    <ItemGroup Label="Code Style">
+        <PackageReference Include="Messerli.CodeStyle" PrivateAssets="all" />
+    </ItemGroup>
+    <PropertyGroup Label="Code Style">
+        <AnalysisLevel>5.0</AnalysisLevel>
+    </PropertyGroup>
+    <PropertyGroup Label="C# Settings">
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+    <PropertyGroup Label="Deterministic Builds and Source Link">
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    </PropertyGroup>
+    <ItemGroup Label="Deterministic Builds and Source Link">
+        <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All"/>
+    </ItemGroup>
+</Project>

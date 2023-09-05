@@ -26,6 +26,7 @@ internal sealed class SimpleLexerRule<TToken> : ILexerRule
 
             return builder.Build(new TToken());
         }
+
         return Option<Lexeme>.None;
     }
 

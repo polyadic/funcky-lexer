@@ -1,15 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
         <Product>Funcky.Lexer</Product>
         <Description>Funcky.Lexer writes a lexer in a single expression.</Description>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Funcky" Version="3.3.0" />
+        <PackageReference Include="Funcky"/>
     </ItemGroup>
 
 </Project>

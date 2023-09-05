@@ -25,13 +25,13 @@ public class DefineLexerApi
 
         ImmutableList<Lexeme> lexemes = result.Lexemes;
 
-        Assert.Collection(lexemes,
+        Assert.Collection(
+            lexemes,
             lexeme => Assert.Equal(new Lexeme(new NumberToken(40), new AbsolutePosition(0, 2), false, new LinePosition(1, 1, 2)), lexeme),
             lexeme => Assert.Equal(new Lexeme(new PlusToken(), new AbsolutePosition(2, 1), false, new LinePosition(1, 3, 1)), lexeme),
             lexeme => Assert.Equal(new Lexeme(new NumberToken(20), new AbsolutePosition(3, 2), false, new LinePosition(1, 4, 2)), lexeme),
             lexeme => Assert.Equal(new Lexeme(new MultiplicationToken(), new AbsolutePosition(5, 1), false, new LinePosition(1, 6, 1)), lexeme),
             lexeme => Assert.Equal(new Lexeme(new NumberToken(6), new AbsolutePosition(6, 1), false, new LinePosition(1, 7, 1)), lexeme));
-
 
         ILexemeWalker walker = result.Walker;
 
@@ -54,4 +54,3 @@ public class DefineLexerApi
             ? ScanIdentifier(builder.Retain())
             : builder.Build(new IdentifierToken(builder.CurrentToken));
 }
-

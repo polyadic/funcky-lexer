@@ -9,4 +9,4 @@ public record Lexeme(
     LinePosition LinePosition)
 {
     public delegate Lexeme Factory(ILexemeBuilder builder);
-};
+}
