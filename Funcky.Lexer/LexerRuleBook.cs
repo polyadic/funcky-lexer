@@ -15,6 +15,7 @@ public class LexerRuleBook
     private readonly ILexemeBuilder.Factory _newLexemeBuilder;
     private readonly ILexemeWalker.Factory _newLexemeWalker;
     private readonly IEpsilonToken.Factory _newEpsilonToken;
+    private readonly Option<Func<IEnumerable<Lexeme>, IEnumerable<Lexeme>>> _postProcess;
 
     private readonly ImmutableList<ILexerRule> _rules;
 
@@ -24,6 +25,7 @@ public class LexerRuleBook
         ILexemeBuilder.Factory newLexemeBuilder,
         ILexemeWalker.Factory newLexemeWalker,
         IEpsilonToken.Factory newEpsilonToken,
+        Option<Func<IEnumerable<Lexeme>, IEnumerable<Lexeme>>> postProcess,
         ImmutableList<ILexerRule> rules)
     {
         _newLexerReader = newLexerReader;
@@ -31,12 +33,22 @@ public class LexerRuleBook
         _newLexemeBuilder = newLexemeBuilder;
         _newLexemeWalker = newLexemeWalker;
         _newEpsilonToken = newEpsilonToken;
+        _postProcess = postProcess;
         _rules = rules;
     }
 
     public static LexerRuleBookBuilder Builder { get; } = new();
 
     public LexerResult Scan(string expression)
+    {
+        var lexemes = _postProcess.Match(
+            none: () => CreateLexemes(expression),
+            some: processLexemes => processLexemes(CreateLexemes(expression)).ToImmutableList());
+
+        return new LexerResult(lexemes, _newLexemeWalker(lexemes, _newEpsilonToken));
+    }
+
+    private ImmutableList<Lexeme> CreateLexemes(string expression)
     {
         var reader = _newLexerReader(expression);
 
@@ -46,8 +58,7 @@ public class LexerRuleBook
             lexemes = lexemes.Add(FindNextLexeme(reader, lexemes));
         }
 
-        // Todo: old implementation allowed postprocessing tokens here...
-        return new LexerResult(lexemes, _newLexemeWalker(lexemes, _newEpsilonToken));
+        return lexemes;
     }
 
     private Lexeme FindNextLexeme(ILexerReader reader, ImmutableList<Lexeme> context)

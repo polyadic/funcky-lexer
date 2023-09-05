@@ -17,6 +17,8 @@ public record LexerRuleBookBuilder : ILexerRuleBookBuilder
 
     private ILexemeWalker.Factory NewLexemeWalker { get; init; } = ILexemeWalker.DefaultFactory;
 
+    private Option<Func<IEnumerable<Lexeme>, IEnumerable<Lexeme>>> PostProcess { get; init; }
+
     private Option<IEpsilonToken.Factory> NewEpsilonToken { get; init; }
 
     private ImmutableList<ILexerRule> Rules { get; init; } = ImmutableList<ILexerRule>.Empty;
@@ -64,6 +66,12 @@ public record LexerRuleBookBuilder : ILexerRuleBookBuilder
     ILexerRuleBookBuilder ILexerRuleBookBuilder.WithLexemeBuilder(ILexemeBuilder.Factory newLexemeBuilder)
         => this with { NewLexemeBuilder = newLexemeBuilder };
 
+    public LexerRuleBookBuilder WithPostProcess(Func<IEnumerable<Lexeme>, IEnumerable<Lexeme>> postProcess)
+        => this with { PostProcess = postProcess };
+
+    ILexerRuleBookBuilder ILexerRuleBookBuilder.WithPostProcess(Func<IEnumerable<Lexeme>, IEnumerable<Lexeme>> postProcess)
+        => this with { PostProcess = postProcess };
+
     public ILexerRuleBookBuilder WithEpsilonToken<TEpsilonToken>()
         where TEpsilonToken : IEpsilonToken, new()
         => this with { NewEpsilonToken = (IEpsilonToken.Factory)(() => new TEpsilonToken()) };
@@ -75,6 +83,7 @@ public record LexerRuleBookBuilder : ILexerRuleBookBuilder
             newLexemeBuilder: NewLexemeBuilder,
             newLexemeWalker: NewLexemeWalker,
             newEpsilonToken: NewEpsilonToken.GetOrElse(ThrowUnreachable<IEpsilonToken.Factory>),
+            postProcess: PostProcess,
             rules: Rules);
 
     [Obsolete(message: "You forgot to define an Epsilon token with WithEpsilon<YourEpsilonToken> on the Builder.", error: true)]

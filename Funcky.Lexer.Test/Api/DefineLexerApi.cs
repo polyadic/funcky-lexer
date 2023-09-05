@@ -44,6 +44,28 @@ public class DefineLexerApi
         Assert.Equal(new Lexeme(new EpsilonToken(), new AbsolutePosition(7, 0), false, new LinePosition(1, 8, 0)), walker.Pop());
     }
 
+    [Fact]
+    public void WhenGivenAPostProcessFunctionTheLexmesAreChangedAccordingly()
+    {
+        LexerResult result = LexerRuleBook.Builder
+            .WithEpsilonToken<EpsilonToken>()
+            .WithLexemeBuilder(ILexemeBuilder.DefaultFactory)
+            .WithLexerReader(ILexerReader.DefaultFactory)
+            .WithLinePositionCalculator(ILinePositionCalculator.DefaultFactory)
+            .WithLexemeWalker(ILexemeWalker.DefaultFactory)
+            .AddRule(char.IsDigit, ScanNumber)
+            .AddRule(char.IsLetter, ScanIdentifier)
+            .AddSimpleRule<MinusToken>("-")
+            .AddSimpleRule<PlusToken>("+")
+            .AddSimpleRule<MultiplicationToken>("*")
+            .AddSimpleRule<DivisionToken>("/")
+            .WithPostProcess(_ => Enumerable.Empty<Lexeme>())
+            .Build()
+            .Scan("84/6+17");
+
+        Assert.Empty(result.Lexemes);
+    }
+
     private static Lexeme ScanNumber(ILexemeBuilder builder)
         => builder.Peek().Match(none: false, some: char.IsDigit)
             ? ScanNumber(builder.Retain())
