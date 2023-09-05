@@ -13,13 +13,13 @@ public class DefineLexerApi
             .WithLexerReader(ILexerReader.DefaultFactory)
             .WithLinePositionCalculator(ILinePositionCalculator.DefaultFactory)
             .WithLexemeWalker(ILexemeWalker.DefaultFactory)
-            .WithEpsilonToken<EpsilonToken>()
             .AddRule(char.IsDigit, ScanNumber)
             .AddRule(char.IsLetter, ScanIdentifier)
             .AddSimpleRule<MinusToken>("-")
             .AddSimpleRule<PlusToken>("+")
             .AddSimpleRule<MultiplicationToken>("*")
             .AddSimpleRule<DivisionToken>("/")
+            .WithEpsilonToken<EpsilonToken>()
             .Build()
             .Scan("40+20*6");
 

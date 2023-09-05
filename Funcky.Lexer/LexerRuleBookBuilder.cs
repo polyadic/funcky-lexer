@@ -1,87 +1,70 @@
 ﻿using System.Collections.Immutable;
-using Funcky.Lexer.Exceptions;
 using Funcky.Lexer.Rules;
 using Funcky.Lexer.Token;
-using Funcky.Monads;
 
 namespace Funcky.Lexer;
 
-public class LexerRuleBookBuilder
+public record LexerRuleBookBuilder
 {
-    private ImmutableList<ILexerRule> _rules = ImmutableList<ILexerRule>.Empty;
-    private ILexerReader.Factory _newLexerReader = ILexerReader.DefaultFactory;
-    private ILinePositionCalculator.Factory _newLinePositionCalculator = ILinePositionCalculator.DefaultFactory;
-    private ILexemeBuilder.Factory _newLexemeBuilder = ILexemeBuilder.DefaultFactory;
-    private ILexemeWalker.Factory _newLexemeWalker = ILexemeWalker.DefaultFactory;
-    private Option<IEpsilonToken.Factory> _newEpsilonToken;
+    protected ILexerReader.Factory NewLexerReader { get; init; } = ILexerReader.DefaultFactory;
+
+    protected ILinePositionCalculator.Factory NewLinePositionCalculator { get; init; } = ILinePositionCalculator.DefaultFactory;
+
+    protected ILexemeBuilder.Factory NewLexemeBuilder { get; init; } = ILexemeBuilder.DefaultFactory;
+
+    protected ILexemeWalker.Factory NewLexemeWalker { get; init; } = ILexemeWalker.DefaultFactory;
+
+    protected ImmutableList<ILexerRule> Rules { get; init; } = ImmutableList<ILexerRule>.Empty;
 
     public LexerRuleBookBuilder AddRule(Predicate<char> predicate, Lexeme.Factory createToken, int weight = 0)
-    {
-        _rules = _rules.Add(new LexerRule(predicate, createToken, weight));
-
-        return this;
-    }
+        => this with { Rules = Rules.Add(new LexerRule(predicate, createToken, weight)) };
 
     public LexerRuleBookBuilder AddSimpleRule<TToken>(string textSymbol)
         where TToken : IToken, new()
-    {
-        _rules = _rules.Add(new SimpleLexerRule<TToken>(textSymbol));
-
-        return this;
-    }
+        => this with { Rules = Rules.Add(new SimpleLexerRule<TToken>(textSymbol)) };
 
     public LexerRuleBookBuilder AddRuleWithContext(Predicate<char> symbolPredicate, Predicate<IReadOnlyList<Lexeme>> contextPredicate, Lexeme.Factory createToken, int weight)
-    {
-        _rules = _rules.Add(new LexerRuleWithContext(symbolPredicate, contextPredicate, createToken, weight));
-
-        return this;
-    }
+        => this with { Rules = Rules.Add(new LexerRuleWithContext(symbolPredicate, contextPredicate, createToken, weight)) };
 
     public LexerRuleBookBuilder WithLexerReader(ILexerReader.Factory newLexerReader)
-    {
-        _newLexerReader = newLexerReader;
-
-        return this;
-    }
+        => this with { NewLexerReader = newLexerReader };
 
     public LexerRuleBookBuilder WithLinePositionCalculator(ILinePositionCalculator.Factory newLinePositionCalculator)
-    {
-        _newLinePositionCalculator = newLinePositionCalculator;
-
-        return this;
-    }
+        => this with { NewLinePositionCalculator = newLinePositionCalculator };
 
     public LexerRuleBookBuilder WithLexemeWalker(ILexemeWalker.Factory newLexemeWalker)
-    {
-        _newLexemeWalker = newLexemeWalker;
-
-        return this;
-    }
-
-    public LexerRuleBookBuilder WithEpsilonToken<TEpsilonToken>()
-        where TEpsilonToken : IEpsilonToken, new()
-    {
-        _newEpsilonToken = (IEpsilonToken.Factory)(() => new TEpsilonToken());
-
-        return this;
-    }
-
-    public LexerRuleBook Build()
-        => new(
-            newLexerReader: _newLexerReader,
-            newLinePositionCalculator: _newLinePositionCalculator,
-            newLexemeBuilder: _newLexemeBuilder,
-            newLexemeWalker: _newLexemeWalker,
-            newEpsilonToken: _newEpsilonToken.GetOrElse(NoEpsilonTokenDefined),
-            rules: _rules);
+        => this with { NewLexemeWalker = newLexemeWalker };
 
     public LexerRuleBookBuilder WithLexemeBuilder(ILexemeBuilder.Factory newLexemeBuilder)
-    {
-        _newLexemeBuilder = newLexemeBuilder;
+        => this with { NewLexemeBuilder = newLexemeBuilder };
 
-        return this;
+    public LexerRuleBookBuilderWithEpsilon WithEpsilonToken<TEpsilonToken>()
+        where TEpsilonToken : IEpsilonToken, new()
+    {
+        return new LexerRuleBookBuilderWithEpsilon(this, () => new TEpsilonToken());
     }
 
-    private static IEpsilonToken.Factory NoEpsilonTokenDefined()
-        => throw new LexerException("No epsilon token defined");
+    public record LexerRuleBookBuilderWithEpsilon : LexerRuleBookBuilder
+    {
+        internal LexerRuleBookBuilderWithEpsilon(LexerRuleBookBuilder lexerRuleBookBuilder, IEpsilonToken.Factory newEpsilonToken)
+        {
+            NewLexerReader = lexerRuleBookBuilder.NewLexerReader;
+            NewLinePositionCalculator = lexerRuleBookBuilder.NewLinePositionCalculator;
+            NewLexemeBuilder = lexerRuleBookBuilder.NewLexemeBuilder;
+            NewLexemeWalker = lexerRuleBookBuilder.NewLexemeWalker;
+            Rules = lexerRuleBookBuilder.Rules;
+            NewEpsilonToken = newEpsilonToken;
+        }
+
+        protected IEpsilonToken.Factory NewEpsilonToken { get; init; }
+
+        public LexerRuleBook Build()
+            => new(
+                newLexerReader: NewLexerReader,
+                newLinePositionCalculator: NewLinePositionCalculator,
+                newLexemeBuilder: NewLexemeBuilder,
+                newLexemeWalker: NewLexemeWalker,
+                newEpsilonToken: NewEpsilonToken,
+                rules: Rules);
+    }
 }

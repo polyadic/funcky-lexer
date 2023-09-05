@@ -60,7 +60,9 @@ public sealed class LexerTest
     [Fact]
     public void GivenALexerMissingAProductionForAGivenStringItShouldThrowAnException()
     {
-        var rules = LexerRuleBook.Builder.Build();
+        var rules = LexerRuleBook.Builder
+            .WithEpsilonToken<EpsilonToken>()
+            .Build();
 
         Assert.Throws<UnknownTokenException>(() => rules.Scan("You can't tokenize this!"));
     }

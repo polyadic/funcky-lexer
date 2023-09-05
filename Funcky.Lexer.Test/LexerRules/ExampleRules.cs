@@ -13,6 +13,7 @@ internal static class ExampleRules
             .AddSimpleRule<AndToken>("and")
             .AddSimpleRule<SpaceToken>(" ")
             .AddRule(char.IsLetter, ScanIdentifier)
+            .WithEpsilonToken<EpsilonToken>()
             .Build();
 
     private static Lexeme ScanIdentifier(ILexemeBuilder builder)

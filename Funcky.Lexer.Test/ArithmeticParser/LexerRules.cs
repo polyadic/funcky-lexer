@@ -8,7 +8,6 @@ public static class LexerRules
 {
     public static LexerRuleBook GetRuleBook()
         => LexerRuleBook.Builder
-            .WithEpsilonToken<EpsilonToken>()
             .AddRule(char.IsWhiteSpace, ScanWhiteSpace)
             .AddRule(c => char.IsDigit(c) || c == '.', ScanNumber)
             .AddRule(char.IsLetter, ScanIdentifier)
@@ -21,6 +20,7 @@ public static class LexerRules
             .AddSimpleRule<OpenParenthesisToken>("(")
             .AddSimpleRule<ClosedParenthesisToken>(")")
             .AddSimpleRule<CommaToken>(",")
+            .WithEpsilonToken<EpsilonToken>()
             .Build();
 
     private static Lexeme ScanWhiteSpace(ILexemeBuilder builder)

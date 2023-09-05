@@ -11,6 +11,7 @@ internal static class RulesWithContext
             .AddSimpleRule<BbToken>("bb")
             .AddSimpleRule<CcToken>("cc")
             .AddRuleWithContext(IsC, context => context.Any(lexeme => lexeme.Token is BbToken), ScanCcAfterBb, 3)
+            .WithEpsilonToken<EpsilonToken>()
             .Build();
 
     private static Lexeme ScanCcAfterBb(ILexemeBuilder builder) =>
