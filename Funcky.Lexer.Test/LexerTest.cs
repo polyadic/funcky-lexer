@@ -108,7 +108,9 @@ public sealed class LexerTest
     [Fact]
     public void EmptyTokenWalkerDoesNotThrowOnPeek()
     {
-        var rules = LexerRuleBook.Builder.WithEpsilonToken<EpsilonToken>().Build();
+        var rules = LexerRuleBook.Builder
+            .WithEpsilonToken<EpsilonToken>()
+            .Build();
 
         Assert.IsType<EpsilonToken>(rules.Scan(string.Empty).Walker.Peek().Token);
     }

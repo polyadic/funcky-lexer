@@ -41,25 +41,18 @@ public class LexerRuleBook
 
     public LexerResult Scan(string expression)
     {
+        var reader = _newLexerReader(expression);
         var lexemes = _postProcess.Match(
-            none: () => CreateLexemes(expression),
-            some: processLexemes => processLexemes(CreateLexemes(expression)).ToImmutableList());
+            none: () => CreateLexemes(reader),
+            some: processLexemes => processLexemes(CreateLexemes(reader)).ToImmutableList());
 
         return new LexerResult(lexemes, _newLexemeWalker(lexemes, _newEpsilonToken));
     }
 
-    private ImmutableList<Lexeme> CreateLexemes(string expression)
-    {
-        var reader = _newLexerReader(expression);
-
-        var lexemes = ImmutableList<Lexeme>.Empty;
-        while (reader.Peek().Match(none: false, some: True))
-        {
-            lexemes = lexemes.Add(FindNextLexeme(reader, lexemes));
-        }
-
-        return lexemes;
-    }
+    private ImmutableList<Lexeme> CreateLexemes(ILexerReader reader)
+        => Sequence.Cycle(Unit.Value)
+            .TakeWhile(_ => reader.Peek().Match(none: false, some: True))
+            .Aggregate(ImmutableList<Lexeme>.Empty, (lexemes, _) => lexemes.Add(FindNextLexeme(reader, lexemes)));
 
     private Lexeme FindNextLexeme(ILexerReader reader, ImmutableList<Lexeme> context)
         => SelectLexerRule(reader, context)
