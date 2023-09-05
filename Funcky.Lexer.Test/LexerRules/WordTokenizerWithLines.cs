@@ -6,12 +6,12 @@ internal static class WordTokenizerWithLines
 {
     public static LexerRuleBook GetRules()
         => LexerRuleBook.Builder
+            .WithEpsilonToken<EpsilonToken>()
             .AddRule(char.IsLetter, ScanWord)
             .AddSimpleRule<SpaceToken>(" ")
             .AddSimpleRule<NewLineToken>("\r\n")
             .AddSimpleRule<NewLineToken>("\n")
             .AddSimpleRule<NewLineToken>("\r")
-            .WithEpsilonToken<EpsilonToken>()
             .Build();
 
     private static Lexeme ScanWord(ILexemeBuilder builder)

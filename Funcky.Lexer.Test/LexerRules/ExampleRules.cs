@@ -6,6 +6,7 @@ internal static class ExampleRules
 {
     public static LexerRuleBook GetRules()
         => LexerRuleBook.Builder
+            .WithEpsilonToken<EpsilonToken>()
             .AddSimpleRule<EqualToken>("=")
             .AddSimpleRule<DoubleEqualToken>("==")
             .AddSimpleRule<GreaterToken>("<")
@@ -13,7 +14,6 @@ internal static class ExampleRules
             .AddSimpleRule<AndToken>("and")
             .AddSimpleRule<SpaceToken>(" ")
             .AddRule(char.IsLetter, ScanIdentifier)
-            .WithEpsilonToken<EpsilonToken>()
             .Build();
 
     private static Lexeme ScanIdentifier(ILexemeBuilder builder)

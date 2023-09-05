@@ -9,6 +9,7 @@ public class DefineLexerApi
     public void DefineHowTheApiShouldBeUsed()
     {
         LexerResult result = LexerRuleBook.Builder
+            .WithEpsilonToken<EpsilonToken>()
             .WithLexemeBuilder(ILexemeBuilder.DefaultFactory)
             .WithLexerReader(ILexerReader.DefaultFactory)
             .WithLinePositionCalculator(ILinePositionCalculator.DefaultFactory)
@@ -19,7 +20,6 @@ public class DefineLexerApi
             .AddSimpleRule<PlusToken>("+")
             .AddSimpleRule<MultiplicationToken>("*")
             .AddSimpleRule<DivisionToken>("/")
-            .WithEpsilonToken<EpsilonToken>()
             .Build()
             .Scan("40+20*6");
 
