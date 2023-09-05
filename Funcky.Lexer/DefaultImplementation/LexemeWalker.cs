@@ -19,17 +19,11 @@ internal class LexemeWalker : ILexemeWalker
         _newEpsilonToken = newEpsilonToken;
     }
 
-    private AbsolutePosition EpsilonAbsolutePosition
+    private Position EpsilonAbsolutePosition
         => _lexemes.LastOrNone()
             .Match(
-                none: new AbsolutePosition(0, EpsilonLength),
-                some: lexem => new AbsolutePosition(lexem.AbsolutePosition.EndPosition, EpsilonLength));
-
-    private LinePosition EpsilonLinePosition
-        => _lexemes.LastOrNone()
-            .Match(
-                none: new LinePosition(1, 1, EpsilonLength),
-                some: lexem => lexem.LinePosition with { Column = lexem.LinePosition.Column + lexem.LinePosition.Length, Length = EpsilonLength });
+                none: new Position(0, 1, 1, EpsilonLength),
+                some: lexem => new Position(lexem.Position.EndPosition, lexem.Position.Line, lexem.Position.EndColumn, EpsilonLength));
 
     public Lexeme Pop()
         => ValidToken()
@@ -51,7 +45,6 @@ internal class LexemeWalker : ILexemeWalker
     private Lexeme CreateEpsilon()
         => new(
             Token: _newEpsilonToken(),
-            AbsolutePosition: EpsilonAbsolutePosition,
-            IsLineBreak: false,
-            LinePosition: EpsilonLinePosition);
+            Position: EpsilonAbsolutePosition,
+            IsLineBreak: false);
 }

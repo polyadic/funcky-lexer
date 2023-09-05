@@ -15,23 +15,23 @@ public sealed class PositionWithLinesTest
         var lexemes = result.Lexemes;
 
         // hello on line 1
-        Assert.Equal(1, lexemes[0].LinePosition.Line);
-        Assert.Equal(1, lexemes[0].LinePosition.Column);
-        Assert.Equal(5, lexemes[0].LinePosition.Length);
+        Assert.Equal(1, lexemes[0].Position.Line);
+        Assert.Equal(1, lexemes[0].Position.StartColumn);
+        Assert.Equal(5, lexemes[0].Position.Length);
 
         // This on line 3
-        Assert.Equal(3, lexemes[3].LinePosition.Line);
-        Assert.Equal(1, lexemes[3].LinePosition.Column);
-        Assert.Equal(4, lexemes[3].LinePosition.Length);
+        Assert.Equal(3, lexemes[3].Position.Line);
+        Assert.Equal(1, lexemes[3].Position.StartColumn);
+        Assert.Equal(4, lexemes[3].Position.Length);
 
         // is on line 3
-        Assert.Equal(3, lexemes[5].LinePosition.Line);
-        Assert.Equal(6, lexemes[5].LinePosition.Column);
-        Assert.Equal(2, lexemes[5].LinePosition.Length);
+        Assert.Equal(3, lexemes[5].Position.Line);
+        Assert.Equal(6, lexemes[5].Position.StartColumn);
+        Assert.Equal(2, lexemes[5].Position.Length);
 
         // end at the last line of the file
-        Assert.Equal(6, lexemes[27].LinePosition.Line);
-        Assert.Equal(5, lexemes[27].LinePosition.Column);
-        Assert.Equal(3, lexemes[27].LinePosition.Length);
+        Assert.Equal(6, lexemes[27].Position.Line);
+        Assert.Equal(5, lexemes[27].Position.StartColumn);
+        Assert.Equal(3, lexemes[27].Position.Length);
     }
 }

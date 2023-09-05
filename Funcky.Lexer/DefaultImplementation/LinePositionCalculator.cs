@@ -4,35 +4,33 @@ namespace Funcky.Lexer.Default;
 
 internal class LinePositionCalculator : ILinePositionCalculator
 {
-    private readonly ImmutableList<AbsolutePosition> _newLines;
+    private readonly ImmutableList<int> _newLines;
 
     public LinePositionCalculator(IEnumerable<Lexeme> lexemes)
         => _newLines = lexemes
             .Where(lexeme => lexeme.IsLineBreak)
-            .Select(lexeme => lexeme.AbsolutePosition)
+            .Select(lexeme => lexeme.Position.EndPosition)
             .ToImmutableList();
 
-    public LinePosition CalculateLinePosition(int absolutePosition, int length)
-        => CalculateRelativePosition(
-            LineNumber(absolutePosition),
-            absolutePosition,
-            length,
-            FindClosestNewLineBefore(absolutePosition));
-
-    private int LineNumber(int absolutePosition)
-        => _newLines
-            .Count(position => position.StartPosition < absolutePosition);
-
-    private static LinePosition CalculateRelativePosition(int lineNumber, int absolutePosition, int length, AbsolutePosition newLinePosition)
+    public Position CalculateLinePosition(int absolutePosition, int length)
         => new(
-            ToHumanIndex(lineNumber),
-            ToHumanIndex(absolutePosition - newLinePosition.EndPosition),
+            absolutePosition,
+            ToHumanIndex(LineNumber(absolutePosition)),
+            ToHumanIndex(absolutePosition - FindClosestNewLineBefore(absolutePosition)),
             length);
+
+    private int LineNumber(int position)
+        => _newLines
+            .Count(IsBeforeLineBreak(position));
+
+    private int FindClosestNewLineBefore(int position)
+        => _newLines
+            .LastOrDefault(IsBeforeLineBreak(position));
 
     private static int ToHumanIndex(int index)
         => index + 1;
 
-    private AbsolutePosition FindClosestNewLineBefore(int position)
-        => _newLines
-            .LastOrDefault(newLinePosition => newLinePosition.StartPosition < position);
+    private static Func<int, bool> IsBeforeLineBreak(int position)
+        => newLinePosition
+            => newLinePosition <= position;
 }

@@ -25,36 +25,36 @@ public sealed class LexerTest
                 "6*(10+20+30)",
                 new List<Lexeme>
                 {
-                    new(new NumberToken(6), new AbsolutePosition(0, 1), false, new LinePosition(1, 1, 1)),
-                    new(new MultiplicationToken(), new AbsolutePosition(1, 1), false, new LinePosition(1, 2, 1)),
-                    new(new OpenParenthesisToken(), new AbsolutePosition(2, 1), false, new LinePosition(1, 3, 1)),
-                    new(new NumberToken(10), new AbsolutePosition(3, 2), false, new LinePosition(1, 4, 2)),
-                    new(new PlusToken(), new AbsolutePosition(5, 1), false, new LinePosition(1, 6, 1)),
-                    new(new NumberToken(20), new AbsolutePosition(6, 2), false, new LinePosition(1, 7, 2)),
-                    new(new PlusToken(), new AbsolutePosition(8, 1), false, new LinePosition(1, 9, 1)),
-                    new(new NumberToken(30), new AbsolutePosition(9, 2), false, new LinePosition(1, 10, 2)),
-                    new(new ClosedParenthesisToken(), new AbsolutePosition(11, 1), false, new LinePosition(1, 12, 1)),
-                    new(new EpsilonToken(), new AbsolutePosition(12, 0), false, new LinePosition(1, 13, 0)),
+                    new(new NumberToken(6), new Position(0, 1, 1, 1), false),
+                    new(new MultiplicationToken(), new Position(1, 1, 2, 1), false),
+                    new(new OpenParenthesisToken(), new Position(2, 1, 3, 1), false),
+                    new(new NumberToken(10), new Position(3, 1, 4, 2), false),
+                    new(new PlusToken(), new Position(5, 1, 6, 1), false),
+                    new(new NumberToken(20), new Position(6, 1, 7, 2), false),
+                    new(new PlusToken(), new Position(8, 1, 9, 1), false),
+                    new(new NumberToken(30), new Position(9, 1, 10, 2), false),
+                    new(new ClosedParenthesisToken(), new Position(11, 1, 12, 1), false),
+                    new(new EpsilonToken(), new Position(12, 1, 13, 0), false),
                 }
             },
             {
                 "(42.1337)",
                 new List<Lexeme>
                 {
-                    new(new OpenParenthesisToken(), new AbsolutePosition(0, 1), false, new LinePosition(1, 1, 1)),
-                    new(new NumberToken(42.1337), new AbsolutePosition(1, 7), false, new LinePosition(1, 2, 7)),
-                    new(new ClosedParenthesisToken(), new AbsolutePosition(8, 1), false, new LinePosition(1, 9, 1)),
-                    new(new EpsilonToken(), new AbsolutePosition(9, 0), false, new LinePosition(1, 10, 0)),
+                    new(new OpenParenthesisToken(), new Position(0, 1, 1, 1), false),
+                    new(new NumberToken(42.1337), new Position(1, 1, 2, 7), false),
+                    new(new ClosedParenthesisToken(), new Position(8, 1, 9, 1), false),
+                    new(new EpsilonToken(), new Position(9, 1, 10, 0), false),
                 }
             },
             {
                 string.Empty,
                 new List<Lexeme>
                 {
-                    new(new EpsilonToken(), new AbsolutePosition(0, 0), false, new LinePosition(1, 1, 0)),
-                    new(new EpsilonToken(), new AbsolutePosition(0, 0), false, new LinePosition(1, 1, 0)),
-                    new(new EpsilonToken(), new AbsolutePosition(0, 0), false, new LinePosition(1, 1, 0)),
-                    new(new EpsilonToken(), new AbsolutePosition(0, 0), false, new LinePosition(1, 1, 0)),
+                    new(new EpsilonToken(), new Position(0, 1, 1, 0), false),
+                    new(new EpsilonToken(), new Position(0, 1, 1, 0), false),
+                    new(new EpsilonToken(), new Position(0, 1, 1, 0), false),
+                    new(new EpsilonToken(), new Position(0, 1, 1, 0), false),
                 }
             },
         };

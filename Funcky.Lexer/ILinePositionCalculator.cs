@@ -8,5 +8,5 @@ public interface ILinePositionCalculator
 
     public delegate ILinePositionCalculator Factory(IReadOnlyList<Lexeme> lexemes);
 
-    LinePosition CalculateLinePosition(int absolutePosition, int length);
+    Position CalculateLinePosition(int absolutePosition, int length);
 }

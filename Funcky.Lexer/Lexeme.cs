@@ -4,9 +4,8 @@ namespace Funcky.Lexer;
 
 public record Lexeme(
     IToken Token,
-    AbsolutePosition AbsolutePosition,
-    bool IsLineBreak,
-    LinePosition LinePosition)
+    Position Position,
+    bool IsLineBreak)
 {
     public delegate Lexeme Factory(ILexemeBuilder builder);
 }

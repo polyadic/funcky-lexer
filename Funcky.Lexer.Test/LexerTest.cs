@@ -40,21 +40,21 @@ public sealed class LexerTest
         var lexemes = rules.Scan("love and sand and testing").Lexemes;
         Assert.Equal(9, lexemes.Count);
 
-        Assert.Equal(0, lexemes[0].AbsolutePosition.StartPosition);
-        Assert.Equal(4, lexemes[0].AbsolutePosition.Length);
-        Assert.Equal(4, lexemes[0].AbsolutePosition.EndPosition);
+        Assert.Equal(0, lexemes[0].Position.StartPosition);
+        Assert.Equal(4, lexemes[0].Position.Length);
+        Assert.Equal(4, lexemes[0].Position.EndPosition);
 
         Assert.IsType<SpaceToken>(lexemes[3].Token);
 
-        Assert.Equal(8, lexemes[3].AbsolutePosition.StartPosition);
-        Assert.Equal(1, lexemes[3].AbsolutePosition.Length);
-        Assert.Equal(9, lexemes[3].AbsolutePosition.EndPosition);
+        Assert.Equal(8, lexemes[3].Position.StartPosition);
+        Assert.Equal(1, lexemes[3].Position.Length);
+        Assert.Equal(9, lexemes[3].Position.EndPosition);
 
         Assert.IsType<AndToken>(lexemes[6].Token);
 
-        Assert.Equal(14, lexemes[6].AbsolutePosition.StartPosition);
-        Assert.Equal(3, lexemes[6].AbsolutePosition.Length);
-        Assert.Equal(17, lexemes[6].AbsolutePosition.EndPosition);
+        Assert.Equal(14, lexemes[6].Position.StartPosition);
+        Assert.Equal(3, lexemes[6].Position.Length);
+        Assert.Equal(17, lexemes[6].Position.EndPosition);
     }
 
     [Fact]

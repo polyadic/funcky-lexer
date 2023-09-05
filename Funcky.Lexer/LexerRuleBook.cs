@@ -63,7 +63,7 @@ public class LexerRuleBook
     private Lexeme HandleUnknownToken(ILexerReader reader, ImmutableList<Lexeme> context)
         => throw new UnknownTokenException(reader.Peek(), CalculateCurrentLinePosition(reader.Position, context));
 
-    private LinePosition CalculateCurrentLinePosition(int position, ImmutableList<Lexeme> context)
+    private Position CalculateCurrentLinePosition(int position, ImmutableList<Lexeme> context)
         => _newLinePositionCalculator(context)
             .CalculateLinePosition(position, 1);
 
