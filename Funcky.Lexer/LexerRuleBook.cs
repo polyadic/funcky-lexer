@@ -40,14 +40,14 @@ public class LexerRuleBook
     {
         var reader = _newLexerReader(expression);
 
-        var lexmes = ImmutableList<Lexeme>.Empty;
+        var lexemes = ImmutableList<Lexeme>.Empty;
         while (reader.Peek().Match(none: false, some: True))
         {
-            lexmes = lexmes.Add(FindNextLexeme(reader, lexmes));
+            lexemes = lexemes.Add(FindNextLexeme(reader, lexemes));
         }
 
         // Todo: old implementation allowed postprocessing tokens here...
-        return new LexerResult(lexmes, _newLexemeWalker(lexmes, _newEpsilonToken));
+        return new LexerResult(lexemes, _newLexemeWalker(lexemes, _newEpsilonToken));
     }
 
     private Lexeme FindNextLexeme(ILexerReader reader, ImmutableList<Lexeme> context)

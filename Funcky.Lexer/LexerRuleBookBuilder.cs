@@ -74,20 +74,14 @@ public record LexerRuleBookBuilder : ILexerRuleBookBuilder
             newLinePositionCalculator: NewLinePositionCalculator,
             newLexemeBuilder: NewLexemeBuilder,
             newLexemeWalker: NewLexemeWalker,
-            newEpsilonToken: NewEpsilonToken.GetOrElse(ThrowUnreachable),
+            newEpsilonToken: NewEpsilonToken.GetOrElse(ThrowUnreachable<IEpsilonToken.Factory>),
             rules: Rules);
 
     [Obsolete(message: "You forgot to define an Epsilon token with WithEpsilon<YourEpsilonToken> on the Builder.", error: true)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public LexerRuleBook Build()
-        => new(
-            newLexerReader: NewLexerReader,
-            newLinePositionCalculator: NewLinePositionCalculator,
-            newLexemeBuilder: NewLexemeBuilder,
-            newLexemeWalker: NewLexemeWalker,
-            newEpsilonToken: NewEpsilonToken.GetOrElse(ThrowUnreachable),
-            rules: Rules);
+        => ThrowUnreachable<LexerRuleBook>();
 
-    private static IEpsilonToken.Factory ThrowUnreachable()
+    private static TReturn ThrowUnreachable<TReturn>()
         => throw new UnreachableException("protected by type system");
 }
