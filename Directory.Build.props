@@ -7,11 +7,16 @@
     </PropertyGroup>
 
     <PropertyGroup Label="Shared NuGet Metadata">
+        <RepositoryType>git</RepositoryType>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
         <Authors>Polyadic</Authors>
         <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/polyadic/funcky</PackageProjectUrl>
         <Copyright>© Polyadic. All rights reserved.</Copyright>
     </PropertyGroup>
+
     <PropertyGroup>
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
     </PropertyGroup>
