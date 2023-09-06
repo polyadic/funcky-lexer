@@ -1,6 +1,8 @@
 ﻿using System.Collections.Immutable;
 using System.ComponentModel;
+#if NET7_0_OR_GREATER
 using System.Diagnostics;
+#endif
 using Funcky.Lexer.Rules;
 using Funcky.Lexer.Token;
 using Funcky.Monads;
@@ -92,5 +94,10 @@ public record LexerRuleBookBuilder : ILexerRuleBookBuilder
         => ThrowUnreachable<LexerRuleBook>();
 
     private static TReturn ThrowUnreachable<TReturn>()
+#if NET7_0_OR_GREATER
         => throw new UnreachableException("protected by type system");
+#else
+        => throw new Exception("unreachable: protected by type system");
+#endif
+
 }

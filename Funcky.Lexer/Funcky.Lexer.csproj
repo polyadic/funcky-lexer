@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <TargetFrameworks>net7.0;net5.0</TargetFrameworks>
         <Product>Funcky.Lexer</Product>
         <Description>Funcky.Lexer writes a lexer in a single expression.</Description>
         <PackageTags>parser, lexer</PackageTags>
-        <Version>0.9.0</Version>
+        <Version>0.9.1</Version>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
