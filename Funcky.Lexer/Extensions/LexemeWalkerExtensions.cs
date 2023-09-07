@@ -3,7 +3,7 @@ using Funcky.Lexer.Token;
 
 namespace Funcky.Lexer.Extensions;
 
-public static class LexmeWalkerExtensions
+public static class LexemeWalkerExtensions
 {
     public static Lexeme Consume<TToken>(this ILexemeWalker walker)
         where TToken : IToken

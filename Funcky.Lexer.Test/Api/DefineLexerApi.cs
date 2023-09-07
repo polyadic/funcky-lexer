@@ -45,7 +45,7 @@ public class DefineLexerApi
     }
 
     [Fact]
-    public void WhenGivenAPostProcessFunctionTheLexmesAreChangedAccordingly()
+    public void WhenGivenAPostProcessFunctionTheLexemesAreChangedAccordingly()
     {
         LexerResult result = LexerRuleBook.Builder
             .WithEpsilonToken<EpsilonToken>()
