@@ -25,11 +25,14 @@ public record LexerRuleBookBuilder : ILexerRuleBookBuilder
 
     private ImmutableList<ILexerRule> Rules { get; init; } = ImmutableList<ILexerRule>.Empty;
 
-    public LexerRuleBookBuilder AddRule(Predicate<char> predicate, Lexeme.Factory createToken, int weight = 0)
-        => this with { Rules = Rules.Add(new LexerRule(predicate, createToken, weight)) };
+    public ILexerRuleBookBuilder AddRule(ILexerRule rule)
+        => this with { Rules = Rules.Add(rule) };
 
-    ILexerRuleBookBuilder ILexerRuleBookBuilder.AddRule(Predicate<char> predicate, Lexeme.Factory createToken, int weight)
-       => AddRule(predicate, createToken, weight);
+    public LexerRuleBookBuilder AddRule(Predicate<char> predicate, Lexeme.Factory createLexeme, int weight = 0)
+        => this with { Rules = Rules.Add(new LexerRule(predicate, createLexeme, weight)) };
+
+    ILexerRuleBookBuilder ILexerRuleBookBuilder.AddRule(Predicate<char> predicate, Lexeme.Factory createLexeme, int weight)
+       => AddRule(predicate, createLexeme, weight);
 
     /// <summary>
     /// This is the simplest way to define Rule, it translates any static string into a corresponding Token.
@@ -43,11 +46,11 @@ public record LexerRuleBookBuilder : ILexerRuleBookBuilder
     ILexerRuleBookBuilder ILexerRuleBookBuilder.AddSimpleRule<TToken>(string textSymbol)
         => AddSimpleRule<TToken>(textSymbol);
 
-    public LexerRuleBookBuilder AddRuleWithContext(Predicate<char> symbolPredicate, Predicate<IReadOnlyList<Lexeme>> contextPredicate, Lexeme.Factory createToken, int weight)
-        => this with { Rules = Rules.Add(new LexerRuleWithContext(symbolPredicate, contextPredicate, createToken, weight)) };
+    public LexerRuleBookBuilder AddRuleWithContext(Predicate<char> symbolPredicate, Predicate<IReadOnlyList<Lexeme>> contextPredicate, Lexeme.Factory createLexeme, int weight)
+        => this with { Rules = Rules.Add(new LexerRuleWithContext(symbolPredicate, contextPredicate, createLexeme, weight)) };
 
-    ILexerRuleBookBuilder ILexerRuleBookBuilder.AddRuleWithContext(Predicate<char> symbolPredicate, Predicate<IReadOnlyList<Lexeme>> contextPredicate, Lexeme.Factory createToken, int weight)
-        => AddRuleWithContext(symbolPredicate, contextPredicate, createToken, weight);
+    ILexerRuleBookBuilder ILexerRuleBookBuilder.AddRuleWithContext(Predicate<char> symbolPredicate, Predicate<IReadOnlyList<Lexeme>> contextPredicate, Lexeme.Factory createLexeme, int weight)
+        => AddRuleWithContext(symbolPredicate, contextPredicate, createLexeme, weight);
 
     public LexerRuleBookBuilder WithLexerReader(ILexerReader.Factory newLexerReader)
         => this with { NewLexerReader = newLexerReader };

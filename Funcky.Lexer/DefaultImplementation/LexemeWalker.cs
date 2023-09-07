@@ -45,6 +45,5 @@ internal class LexemeWalker : ILexemeWalker
     private Lexeme CreateEpsilon()
         => new(
             Token: _newEpsilonToken(),
-            Position: EpsilonAbsolutePosition,
-            IsLineBreak: false);
+            Position: EpsilonAbsolutePosition);
 }

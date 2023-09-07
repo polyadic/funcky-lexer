@@ -60,17 +60,17 @@ public sealed class InjectionTest
         // The FakeDigitLexemeBuilder's Retain() call transforms any digit to a '4'
         Assert.Collection(
             result.Lexemes,
-            lexeme => Assert.Equal(new Lexeme(new NumberToken(44), new Position(0, 1, 1, 2), false), lexeme),
-            lexeme => Assert.Equal(new Lexeme(new PlusToken(), new Position(2, 1, 3, 1), false), lexeme),
-            lexeme => Assert.Equal(new Lexeme(new NumberToken(44), new Position(3, 1, 4, 2), false), lexeme),
-            lexeme => Assert.Equal(new Lexeme(new MultiplicationToken(), new Position(5, 1, 6, 1), false), lexeme),
-            lexeme => Assert.Equal(new Lexeme(new NumberToken(4), new Position(6, 1, 7, 1), false), lexeme));
+            lexeme => Assert.Equal(new Lexeme(new NumberToken(44), new Position(0, 1, 1, 2)), lexeme),
+            lexeme => Assert.Equal(new Lexeme(new PlusToken(), new Position(2, 1, 3, 1)), lexeme),
+            lexeme => Assert.Equal(new Lexeme(new NumberToken(44), new Position(3, 1, 4, 2)), lexeme),
+            lexeme => Assert.Equal(new Lexeme(new MultiplicationToken(), new Position(5, 1, 6, 1)), lexeme),
+            lexeme => Assert.Equal(new Lexeme(new NumberToken(4), new Position(6, 1, 7, 1)), lexeme));
     }
 
     [Fact]
     public void WhenGivenAPostProcessFunctionTheLexemesAreChangedAccordingly()
     {
-        var sequence = Sequence.Return(new Lexeme(new NumberToken(1337.42), new Position(0, 1, 0, 7), false));
+        var sequence = Sequence.Return(new Lexeme(new NumberToken(1337.42), new Position(0, 1, 0, 7)));
 
         var result = ArithmeticLexerRules.GetRules()
             .WithPostProcess(_ => sequence)

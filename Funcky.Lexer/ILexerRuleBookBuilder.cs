@@ -1,15 +1,24 @@
-﻿using Funcky.Lexer.Token;
+﻿using Funcky.Lexer.Rules;
+using Funcky.Lexer.Token;
 
 namespace Funcky.Lexer;
 
 public interface ILexerRuleBookBuilder
 {
-    ILexerRuleBookBuilder AddRule(Predicate<char> predicate, Lexeme.Factory createToken, int weight = 0);
+    /// <summary>
+    /// Add your own generic lexer rule: you have to implement your rule by implementing the ILexerRule interface.
+    /// </summary>
+    ILexerRuleBookBuilder AddRule(ILexerRule rule);
+
+    /// <summary>
+    /// Add a generic rule based on a predicate and a Lexeme.Factory.
+    /// </summary>
+    ILexerRuleBookBuilder AddRule(Predicate<char> predicate, Lexeme.Factory createLexeme, int weight = 0);
 
     ILexerRuleBookBuilder AddSimpleRule<TToken>(string textSymbol)
         where TToken : IToken, new();
 
-    ILexerRuleBookBuilder AddRuleWithContext(Predicate<char> symbolPredicate, Predicate<IReadOnlyList<Lexeme>> contextPredicate, Lexeme.Factory createToken, int weight);
+    ILexerRuleBookBuilder AddRuleWithContext(Predicate<char> symbolPredicate, Predicate<IReadOnlyList<Lexeme>> contextPredicate, Lexeme.Factory createLexeme, int weight);
 
     ILexerRuleBookBuilder WithLexerReader(ILexerReader.Factory newLexerReader);
 

@@ -13,11 +13,11 @@ internal sealed class EpsilonLexemeWalker : ILexemeWalker
 
     public Lexeme Pop()
     {
-        return new Lexeme(_newEpsilonToken(), new Position(0, 0, 0, 0), false);
+        return new Lexeme(_newEpsilonToken(), new Position(0, 0, 0, 0));
     }
 
     public Lexeme Peek(int lookAhead = 0)
     {
-        return new Lexeme(_newEpsilonToken(), new Position(0, 0, 0, 0), false);
+        return new Lexeme(_newEpsilonToken(), new Position(0, 0, 0, 0));
     }
 }

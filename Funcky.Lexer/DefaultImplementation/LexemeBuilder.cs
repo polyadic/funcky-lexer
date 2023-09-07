@@ -27,8 +27,7 @@ internal class LexemeBuilder : ILexemeBuilder
     public Lexeme Build(IToken token)
         => new(
             Token: token,
-            Position: _linePositionCalculator.CalculateLinePosition(_startPosition, Length()),
-            IsLineBreak: token is ILineBreakToken);
+            Position: _linePositionCalculator.CalculateLinePosition(_startPosition, Length()));
 
     public Option<char> Peek(int lookAhead = 0)
         => _reader.Peek(lookAhead);

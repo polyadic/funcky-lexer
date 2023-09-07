@@ -6,7 +6,7 @@ namespace Funcky.Lexer.Rules;
 public interface ILexerRule
 {
     /// <summary>
-    /// If more than one rule matches, the rule with the higher weights gets selected.
+    /// If more than one rule matches, the rule with the higher weight gets selected.
     /// </summary>
     int Weight { get; }
 
