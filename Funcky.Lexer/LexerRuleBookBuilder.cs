@@ -25,8 +25,11 @@ public record LexerRuleBookBuilder : ILexerRuleBookBuilder
 
     private ImmutableList<ILexerRule> Rules { get; init; } = ImmutableList<ILexerRule>.Empty;
 
-    public ILexerRuleBookBuilder AddRule(ILexerRule rule)
+    public LexerRuleBookBuilder AddRule(ILexerRule rule)
         => this with { Rules = Rules.Add(rule) };
+
+    ILexerRuleBookBuilder ILexerRuleBookBuilder.AddRule(ILexerRule rule)
+        => AddRule(rule);
 
     public LexerRuleBookBuilder AddRule(Predicate<char> predicate, Lexeme.Factory createLexeme, int weight = 0)
         => this with { Rules = Rules.Add(new LexerRule(predicate, createLexeme, weight)) };
