@@ -1,5 +1,7 @@
 ﻿using System.Collections.Immutable;
+using Funcky.Extensions;
 using Funcky.Lexer.Token;
+using Funcky.Monads;
 
 namespace Funcky.Lexer.Default;
 
@@ -9,8 +11,7 @@ internal class LinePositionCalculator : ILinePositionCalculator
 
     public LinePositionCalculator(IEnumerable<Lexeme> lexemes)
         => _newLines = lexemes
-            .Where(lexeme => lexeme.Token is ILineBreakToken)
-            .Select(lexeme => lexeme.Position.EndPosition)
+            .WhereSelect(ToLineBreakPosition)
             .ToImmutableList();
 
     public Position CalculateLinePosition(int absolutePosition, int length)
@@ -34,4 +35,9 @@ internal class LinePositionCalculator : ILinePositionCalculator
     private static Func<int, bool> IsBeforeLineBreak(int position)
         => newLinePosition
             => newLinePosition <= position;
+
+    private static Option<int> ToLineBreakPosition(Lexeme lexeme)
+        => lexeme.Token is ILineBreakToken
+            ? lexeme.Position.EndPosition
+            : Option<int>.None;
 }
