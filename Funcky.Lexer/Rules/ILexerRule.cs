@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using Funcky.Monads;
+﻿using Funcky.Monads;
 
 namespace Funcky.Lexer.Rules;
 
@@ -19,5 +18,5 @@ public interface ILexerRule
     /// For Lexer rules which are not context dependent this function returns always true.
     /// Otherwise the Lexer rule can determine its state with the context which is a list of all lexemes which have been produced till now.
     /// </summary>
-    bool IsActive(ImmutableList<Lexeme> context);
+    bool IsActive(IReadOnlyList<Lexeme> context);
 }

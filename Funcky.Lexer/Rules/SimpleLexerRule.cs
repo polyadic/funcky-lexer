@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using Funcky.Extensions;
+﻿using Funcky.Extensions;
 using Funcky.Lexer.Token;
 using Funcky.Monads;
 using static Funcky.Functional;
@@ -24,7 +23,7 @@ internal sealed class SimpleLexerRule<TToken> : ILexerRule
             ? builder.Build(new TToken())
             : Option<Lexeme>.None;
 
-    public bool IsActive(ImmutableList<Lexeme> context)
+    public bool IsActive(IReadOnlyList<Lexeme> context)
         => true;
 
     // we do not want to extract key words in the middle of a word, so a symbol must have ended.

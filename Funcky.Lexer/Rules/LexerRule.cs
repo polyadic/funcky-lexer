@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using Funcky.Monads;
+﻿using Funcky.Monads;
 using static Funcky.Functional;
 
 namespace Funcky.Lexer.Rules;
@@ -21,7 +20,7 @@ internal sealed class LexerRule : ILexerRule
             ? CreateLexeme(builder)
             : Option<Lexeme>.None;
 
-    public bool IsActive(ImmutableList<Lexeme> context)
+    public bool IsActive(IReadOnlyList<Lexeme> context)
         => true;
 
     private Option<bool> ApplyPredicate(ILexemeBuilder builder)
