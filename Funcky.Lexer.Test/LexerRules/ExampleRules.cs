@@ -4,7 +4,7 @@ namespace Funcky.Lexer.Test.LexerRules;
 
 internal static class ExampleRules
 {
-    public static LexerRuleBook GetRules()
+    public static ILexerRuleBookBuilder GetRules()
         => LexerRuleBook.Builder
             .WithEpsilonToken<EpsilonToken>()
             .AddSimpleRule<EqualToken>("=")
@@ -13,8 +13,7 @@ internal static class ExampleRules
             .AddSimpleRule<GreaterEqualToken>("<=")
             .AddSimpleRule<AndToken>("and")
             .AddSimpleRule<SpaceToken>(" ")
-            .AddRule(char.IsLetter, ScanIdentifier)
-            .Build();
+            .AddRule(char.IsLetter, ScanIdentifier);
 
     private static Lexeme ScanIdentifier(ILexemeBuilder builder)
         => builder.Peek().Match(none: false, some: char.IsLetterOrDigit)

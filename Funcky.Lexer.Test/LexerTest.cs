@@ -12,7 +12,7 @@ public sealed class LexerTest
     [Fact]
     public void GivenSymbolsWithOverlappingPrefixesTheLexerGetsTheLongerOne()
     {
-        var rules = ExampleRules.GetRules();
+        var rules = ExampleRules.GetRules().Build();
 
         Assert.IsType<EqualToken>(rules.Scan("=").Lexemes.Single().Token);
         Assert.IsType<DoubleEqualToken>(rules.Scan("==").Lexemes.Single().Token);
@@ -25,7 +25,7 @@ public sealed class LexerTest
     [Fact]
     public void GivenALexerRuleForIdentifiersDoNotReturKeyTokenInTheMiddle()
     {
-        var rules = ExampleRules.GetRules();
+        var rules = ExampleRules.GetRules().Build();
 
         Assert.IsType<IdentifierToken>(rules.Scan("sand").Lexemes.Single().Token);
         Assert.IsType<IdentifierToken>(rules.Scan("andor").Lexemes.Single().Token);
@@ -35,7 +35,7 @@ public sealed class LexerTest
     [Fact]
     public void GivenLexerRulesTheLexemesHaveTheRightPositions()
     {
-        var rules = ExampleRules.GetRules();
+        var rules = ExampleRules.GetRules().Build();
 
         var lexemes = rules.Scan("love and sand and testing").Lexemes;
         Assert.Equal(9, lexemes.Count);
@@ -70,7 +70,7 @@ public sealed class LexerTest
     [Fact]
     public void GivenAStringAndAMissingTokenizerThrows()
     {
-        var rules = RulesWithContext.GetRules();
+        var rules = RulesWithContext.GetRules().Build();
 
         var exception = Assert.Throws<UnknownTokenException>(() => rules.Scan("aa aa cc aa UU cc aa"));
 
@@ -80,7 +80,7 @@ public sealed class LexerTest
     [Fact]
     public void GivenALexerAndAContextedLexerRuleGenerateTokenContexted()
     {
-        var rules = RulesWithContext.GetRules();
+        var rules = RulesWithContext.GetRules().Build();
 
         var lexemes = rules.Scan("aa aa cc aa bb cc aa").Lexemes;
 
@@ -106,7 +106,7 @@ public sealed class LexerTest
     }
 
     [Fact]
-    public void EmptyTokenWalkerDoesNotThrowOnPeek()
+    public void EmptyLexemeWalkerDoesNotThrowOnPeek()
     {
         var rules = LexerRuleBook.Builder
             .WithEpsilonToken<EpsilonToken>()

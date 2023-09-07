@@ -11,9 +11,6 @@ internal class LexerReader : ILexerReader
 
     public int Position { get; private set; }
 
-    public static ILexerReader Create(string expression)
-        => new LexerReader(expression);
-
     public Option<char> Peek(int lookAhead = 0)
         => PeekAt(Position + lookAhead);
 

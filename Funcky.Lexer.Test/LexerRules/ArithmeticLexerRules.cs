@@ -2,11 +2,11 @@
 using Funcky.Lexer.Test.Tokens;
 using static Funcky.Functional;
 
-namespace Funcky.Lexer.Test.ArithmeticParser;
+namespace Funcky.Lexer.Test.LexerRules;
 
-public static class LexerRules
+public static class ArithmeticLexerRules
 {
-    public static LexerRuleBook GetRuleBook()
+    public static ILexerRuleBookBuilder GetRules()
         => LexerRuleBook.Builder
             .WithEpsilonToken<EpsilonToken>()
             .AddRule(char.IsWhiteSpace, ScanWhiteSpace)
@@ -20,8 +20,7 @@ public static class LexerRules
             .AddSimpleRule<PowerToken>("^")
             .AddSimpleRule<OpenParenthesisToken>("(")
             .AddSimpleRule<ClosedParenthesisToken>(")")
-            .AddSimpleRule<CommaToken>(",")
-            .Build();
+            .AddSimpleRule<CommaToken>(",");
 
     private static Lexeme ScanWhiteSpace(ILexemeBuilder builder)
         => builder.Peek().Match(none: false, some: char.IsWhiteSpace)

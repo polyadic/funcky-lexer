@@ -1,8 +1,9 @@
-﻿using Funcky.Lexer.Test.Tokens;
+﻿using Funcky.Lexer.Test.LexerRules;
+using Funcky.Lexer.Test.Tokens;
 
-namespace Funcky.Lexer.Test.ArithmeticParser;
+namespace Funcky.Lexer.Test;
 
-public sealed class LexerTest
+public sealed class ArithmeticParserTest
 {
     [Theory]
     [MemberData(nameof(SourceAndExpectedLExemes))]
@@ -58,7 +59,8 @@ public sealed class LexerTest
         };
 
     private static ILexemeWalker GetLexemeWalker(string expression)
-        => LexerRules.GetRuleBook()
+        => ArithmeticLexerRules.GetRules()
+            .Build()
             .Scan(expression)
             .Walker;
 }

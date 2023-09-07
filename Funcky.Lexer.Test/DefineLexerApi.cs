@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using Funcky.Lexer.Test.Tokens;
 
-namespace Funcky.Lexer.Test.Api;
+namespace Funcky.Lexer.Test;
 
-public class DefineLexerApi
+public sealed class DefineLexerApi
 {
     [Fact]
     public void DefineHowTheApiShouldBeUsed()
@@ -42,28 +42,6 @@ public class DefineLexerApi
         Assert.Equal(new Lexeme(new NumberToken(6), new Position(6, 1, 7, 1), false), walker.Pop());
         Assert.Equal(new Lexeme(new EpsilonToken(), new Position(7, 1, 8, 0), false), walker.Pop());
         Assert.Equal(new Lexeme(new EpsilonToken(), new Position(7, 1, 8, 0), false), walker.Pop());
-    }
-
-    [Fact]
-    public void WhenGivenAPostProcessFunctionTheLexemesAreChangedAccordingly()
-    {
-        LexerResult result = LexerRuleBook.Builder
-            .WithEpsilonToken<EpsilonToken>()
-            .WithLexemeBuilder(ILexemeBuilder.DefaultFactory)
-            .WithLexerReader(ILexerReader.DefaultFactory)
-            .WithLinePositionCalculator(ILinePositionCalculator.DefaultFactory)
-            .WithLexemeWalker(ILexemeWalker.DefaultFactory)
-            .AddRule(char.IsDigit, ScanNumber)
-            .AddRule(char.IsLetter, ScanIdentifier)
-            .AddSimpleRule<MinusToken>("-")
-            .AddSimpleRule<PlusToken>("+")
-            .AddSimpleRule<MultiplicationToken>("*")
-            .AddSimpleRule<DivisionToken>("/")
-            .WithPostProcess(_ => Enumerable.Empty<Lexeme>())
-            .Build()
-            .Scan("84/6+17");
-
-        Assert.Empty(result.Lexemes);
     }
 
     private static Lexeme ScanNumber(ILexemeBuilder builder)

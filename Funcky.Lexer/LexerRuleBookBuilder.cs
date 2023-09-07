@@ -31,6 +31,11 @@ public record LexerRuleBookBuilder : ILexerRuleBookBuilder
     ILexerRuleBookBuilder ILexerRuleBookBuilder.AddRule(Predicate<char> predicate, Lexeme.Factory createToken, int weight)
        => AddRule(predicate, createToken, weight);
 
+    /// <summary>
+    /// This is the simplest way to define Rule, it translates any static string into a corresponding Token.
+    /// Conflicts by overlapping like = and == are handled.
+    /// It also handles differences between words (consisting of letters and digits) which have a word boundary and symbols which might have not.
+    /// </summary>
     public LexerRuleBookBuilder AddSimpleRule<TToken>(string textSymbol)
         where TToken : IToken, new()
        => this with { Rules = Rules.Add(new SimpleLexerRule<TToken>(textSymbol)) };
@@ -76,7 +81,7 @@ public record LexerRuleBookBuilder : ILexerRuleBookBuilder
 
     public ILexerRuleBookBuilder WithEpsilonToken<TEpsilonToken>()
         where TEpsilonToken : IEpsilonToken, new()
-        => this with { NewEpsilonToken = (IEpsilonToken.Factory)(() => new TEpsilonToken()) };
+        => this with { NewEpsilonToken = CreatEpsilonToken<TEpsilonToken>() };
 
     LexerRuleBook ILexerRuleBookBuilder.Build()
         => new(
@@ -92,6 +97,10 @@ public record LexerRuleBookBuilder : ILexerRuleBookBuilder
     [EditorBrowsable(EditorBrowsableState.Never)]
     public LexerRuleBook Build()
         => ThrowUnreachable<LexerRuleBook>();
+
+    private static IEpsilonToken.Factory CreatEpsilonToken<TEpsilonToken>()
+        where TEpsilonToken : IEpsilonToken, new()
+        => () => new TEpsilonToken();
 
     private static TReturn ThrowUnreachable<TReturn>()
 #if NET7_0_OR_GREATER

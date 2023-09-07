@@ -9,7 +9,7 @@ public sealed class PositionWithLinesTest
     [Fact]
     public void GiveALexerAndALineSeparatorThePositionsAreGivenInLineAndColumn()
     {
-        var rules = WordTokenizerWithLines.GetRules();
+        var rules = WordTokenizerWithLines.GetRules().Build();
 
         var result = rules.Scan(ExampleTextWihtNewLines);
         var lexemes = result.Lexemes;
