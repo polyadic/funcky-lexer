@@ -46,6 +46,13 @@ internal sealed class FakeDigitLexemeBuilder : ILexemeBuilder
         return this;
     }
 
+    public ILexemeBuilder Clear()
+    {
+        _stringBuilder.Clear();
+
+        return this;
+    }
+
     private int Length()
         => _reader.Position - _startPosition;
 

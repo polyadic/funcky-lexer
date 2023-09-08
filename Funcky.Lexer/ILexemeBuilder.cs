@@ -40,4 +40,9 @@ public interface ILexemeBuilder
     /// We read the current character but ignore it and do not add it to the CurrentToken.
     /// </summary>
     ILexemeBuilder Discard();
+
+    /// <summary>
+    /// Reset the CurrentToken to an empty string.
+    /// </summary>
+    ILexemeBuilder Clear();
 }
