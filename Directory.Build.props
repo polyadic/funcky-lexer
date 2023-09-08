@@ -13,7 +13,7 @@
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
         <Authors>Polyadic</Authors>
         <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
-        <PackageProjectUrl>https://github.com/polyadic/funcky</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/polyadic/funcky-lexer</PackageProjectUrl>
         <Copyright>© Polyadic. All rights reserved.</Copyright>
     </PropertyGroup>
 
