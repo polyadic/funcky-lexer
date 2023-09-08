@@ -1,6 +1,6 @@
 ﻿using Funcky.Monads;
 
-namespace Funcky.Lexer.Default;
+namespace Funcky.Lexer.DefaultImplementation;
 
 internal sealed class LexerReader : ILexerReader
 {

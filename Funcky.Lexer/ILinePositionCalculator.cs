@@ -1,4 +1,4 @@
-﻿using Funcky.Lexer.Default;
+﻿using Funcky.Lexer.DefaultImplementation;
 
 namespace Funcky.Lexer;
 

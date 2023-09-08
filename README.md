@@ -11,7 +11,7 @@ Can you write a lexer in a single expression? Now you can.
 
 ## Example
 
-Here is simple working example how you would write a simple lexer for a arithmetic parser.
+Here is simple working example how you would write a simple lexer for an arithmetic parser.
 
 Define your tokens by marking them with the `IToken` interface.
 
@@ -22,14 +22,14 @@ public record MultiplicationToken : IToken;
 public record DivisionToken : IToken;
 ```
 
-You have to define an EpsilonToken marked with the `IEpsilonToken` interface. This will be returned by the LexerReader when you read past the end. 
+You have to define an EpsilonToken marked with the `IEpsilonToken` interface. This will be returned by the `ILexemeReader` when you read past the end.
 This also means you should not construct this Token on your own.
 
 ```cs
 public record EpsilonToken : IEpsilonToken;
 ```
 
-Create the rules how you want to lex the tokens. 
+Create all the rules you need to create the lexer tokens.
 
 ```cs
 LexerResult result = LexerRuleBook.Builder
@@ -43,7 +43,7 @@ LexerResult result = LexerRuleBook.Builder
     .Scan("40+20*6");
 ```
 
-Use the lexeme-builder to build any token you want, and the builder is taking care of the position and length of your token.
+Use the `ILexemeBuilder` to build any token you want, and the builder is taking care of the position and length of your token.
 
 ```cs
 private static Lexeme ScanNumber(ILexemeBuilder builder)
@@ -52,7 +52,7 @@ private static Lexeme ScanNumber(ILexemeBuilder builder)
         : builder.Build(new NumberToken(int.Parse(builder.CurrentToken)));
 ```
 
-The LexerResult will have a sequence of lexems which would look like this: 
+The `LexerResult` will have a sequence of lexems which would look like this: 
 
 ```
 Lexeme(NumberToken(40),       Position(0, 1, 1, 2))
@@ -78,18 +78,28 @@ You can add rules with the following methods:
 
 The Simple rules create a token of type `TToken` when they see the specified `textSymbol` the others only look at the first character to decide which rules to invoke.
 
+`AddSimpleRule` has no `weight` parameter, that is because the `weight` always equals the length of the string to avoid overlapping conflicts.
 
-The WithContext rules have an additional contextPredicate which can decide if the rule should be activated or not. 
-That way you can produce different symbols with the same input, for details look at the chapter "Lexemes dependent on context"
+A simple rule defined like this has therefore the `weight` of 5.
 
-You can implement your own rules also by implementing the ILexerRule interface yourself. 
+```cs
+AddSimpleRule<StringToken>("string")
+```
+
+This means you can define a concurrent simple rules for `=` and `==`and it will lex them as expected.
+
+The WithContext rules have an additional contextPredicate which can decide if the rule should be activated or not.
+That way you can produce different symbols with the same input, for details look at [Lexemes dependent on context](#lexemes-dependent-on-context)
+
+
+You can implement your own rules also by implementing the ILexerRule interface yourself.
 This will be necessary if you need to look ahead more than one character and the simple rule is not enough for your use case.
 
 * `AddRule(ILexerRule rule)`
 
 ### Define an epsilon token
 
-You have to define an epsilon token which marks the end of your token-stream. 
+You have to define an epsilon token to mark the end of your token-stream, it should only be built by the `ILexemeWalker` and not by hand.
 
 ```cs
 LexerRuleBook.Builder
@@ -99,7 +109,7 @@ LexerRuleBook.Builder
 ### Define a post process function
 
 Sometimes you don't want to deal with every Token in your parser. A simple way to remove certain nodes,
-or rewrite all your lexemes is to define a post-processing function which takes the list of lexmes and transform it to another list of lexemes.
+or rewrite all your lexemes is to define a post-processing function which takes the list of lexemes and transform it to another list of lexemes.
 
 Here is a simple example for a parser who is not interested in the the whitespace after lexing.
 
@@ -108,23 +118,25 @@ LexerRuleBook.Builder
     .WithPostProcess(lexemes => lexemes.Where(t => t.Token.GetType() != typeof(WhiteSpaceToken)))
 ```
 
+But you can also inject your own ILexemeWalker to do such tasks.
+
 ### Configure the complex szenarios
 
-In simple lexer scenerios you should be fine with the default implemenations but if you get
+In simple lexer scenerios you should be fine with the default implemenations but if you reach the limit of the lexer, there is a simple way to add new unlimited functionality:
 
-You can define your own definitions for `ILexerReader`, `ILinePositionCalculator`, `ILexemeWalker`, `ILexemeBuilder` in complex scenarios where you need more control over the lexin process.
+You can define your own implementations for `ILexerReader`, `ILinePositionCalculator`, `ILexemeWalker`, `ILexemeBuilder` in complex scenarios where you need more control over the lexing process.
 
 * `WithLexerReader(ILexerReader.Factory newLexerReader)`
 * `WithLinePositionCalculator(ILinePositionCalculator.Factory newLinePositionCalculator)`
 * `WithLexemeWalker(ILexemeWalker.Factory newLexemeWalker)`
 * `WithLexemeBuilder(ILexemeBuilder.Factory newLexemeBuilder)`
 
-And you can change implementation details explained more in the "Change the default implementations" chapter.
+This way you can change every implementation detail. If you want to know more you should go to the [Change the default implementations](#change-the-default-implementations) chapter.
 
 ### Build the LexerRuleBook
 
-You can only call the Build method if you already defined an epsilon token.
-The Build function will return a LexerRuleBook which has all the information needed to transform your expressions to lexemes.
+You can only call the `Build()` method if you already defined an epsilon token.
+The `Build()` method will return a `LexerRuleBook` which has all the information needed to transform your expressions to lexemes.
 
 ```cs
 // This is valid and defines an empty lexer which will throw on any input.
@@ -135,9 +147,9 @@ LexerRuleBook.Builder
 
 ## Build a lexeme
 
-The `ILexemeBuilder` helps you to create the lexeme, it automates the position calculations.
+The `ILexemeBuilder` helps you to create the lexeme, it keeps the state and automates the position calculations.
 
-The most important function to investigate is the `Peek` function. It gives you the current character or `Option<char>.None` if you are at the end of the expression.
+The most important function to investigate is the `Peek` function. It gives you the current (or any later) character or it will return `Option<char>.None` if you are at the end of the expression.
 
 ```cs
 Option<char> Peek(int lookAhead = 0);
@@ -145,20 +157,20 @@ Option<char> Peek(int lookAhead = 0);
 
 The `Peek` function does not advance the position, to advance the `Position` there are the `Retain()` and `Discard()` methods.
 
-* Retain() will advance the `Position` and add the current character at the end of `CurrentToken`.
-* Discard() will only advance the `Position` and discard the current character.
+* `Retain()` will advance the `Position` and add the current character at the end of `CurrentToken`.
+* `Discard()` will only advance the `Position` and discard the current character.
 
 Sometimes you want to start over with the `CurrentToken`, in that case use `Clear()`.
 
-you can look at the underlying absolute `Position` if you want, but it usually is not necessary.
+You can look at the underlying absolute `Position` if you want, but it is usually not necessary.
 
-At the end you have to build a lexeme, a lexeme is the token you are constructing ant the position information (Start, End, Line etc.). 
+At the end you have to build a lexeme, a lexeme is the token you are constructing and the position information (Start, End, Line etc.).
 
 The `Build(IToken token)` method on the `ILexemeBuilder` will construct everything for you, you just have to create the Token and return the Lexeme.
 
 ### Example for ILexemeBuilder
 
-Here we have a realistic more complex example where we want to create NumberToken which represent a floating point number.
+Here we have a realistic more complex example where we want to create a `NumberToken` which represent a floating point number.
 
 ```cs
 private static Lexeme ScanNumber(ILexemeBuilder builder)
@@ -196,8 +208,8 @@ private static Lexeme ScanNumber(ILexemeBuilder builder)
 ## Line position calculation
 
 The default line position calculation is very simple, 
-you designate one ore more of your token as `ILineBreakToken` and the lexer is
-automatically calculating the position of each lexeme in the result.
+you designate one ore more of your tokens as `ILineBreakToken` and the lexer is
+automatically calculating the position of each lexeme based on that in the result.
 
 ```cs
 public record NewLineToken : ILineBreakToken;
@@ -205,24 +217,24 @@ public record NewLineToken : ILineBreakToken;
 
 ### Position
 
-The absolute positions (`StartPosition`, `EndPosition`) are zero indexed because they usually are used in a context familiar with this.
-The line and column positions (`Line`,`StartColumn`,`EndColumn`) are one indexed because these positions usually are shown in the output of end users.
+The absolute positions (`StartPosition`, `EndPosition`) are zero-based indexed because they usually are used in a programming context where this is more natural.
+The line and column positions (`Line`,`StartColumn`,`EndColumn`) are one-based indexed because these positions usually are shown in the output for end users.
 
 ### this is not enough?
 
-If you need anything more complicated you should read the chapter "Change the default implementations".
+If you need anything more complicated you should read: [Change the default implementations](#change-the-default-implementations).
 
 ## Lexemes dependent on context
 
-Sometimes you want to create different Token for the same input.
+Sometimes you want to create different tokens for the same input.
 
-In such cases you want `AddRuleWithContext` on the `LexerRuleBookBuilder`, these rules can arbitrarly be activated by the lexemes which came before.
+In such cases you want `AddRuleWithContext` or `AddSimpleRuleWithContext` on the `LexerRuleBookBuilder`, these rules can be activated arbitrarly by the lexemes which came before.
 
-These rules have an aditional parameter, the context predicate. These rules are only activated when this predicate returns true. The predicate works on the list of the lexemes already produced.
+These rules have an additional parameter, the `contextPredicate`. These rules are only activated when this predicate returns `true`. The predicate works on the list of the lexemes already produced.
 
 ### Example
 
-Lets say we have want to have a token class, but we want to allow to use it as an identifier if the class token already appeared previously.
+Lets say we want to have a token `class`, but we want to allow to use it as an identifier if the `ClassToken` already appeared previously.
 
 ```cs
 LexerRuleBook.Builder
@@ -230,8 +242,8 @@ LexerRuleBook.Builder
     .AddSimpleRuleWithContext<ClassToken>("class", context => context.All(lexeme => lexeme is not { Token: ClassToken }), 1)
 ```
 
-We first define a rule which creates the identifier token, work as usual and has the default weight of 0.
-Then we add a rule with context and restrict the usage of it to contexts which have no ClassToken so far. 
+We first define a rule which creates the identifier token, this works as usual and has the default weight of 0.
+Then we add a rule with context and restrict the usage of it to contexts which have no ClassToken so far.
 We give this a weight of 1 so this matches first if it is activated.
 
 For the example input below this means the first class will be created as `ClassToken()` and the second one will be created as `IdentifierToken("class")`
@@ -246,9 +258,9 @@ class MySuperClass
 }
 ```
 
-## implement ILexerRule yourself
+## Implement ILexerRule yourself
 
-You have even more freedom if you implement the ILexerRule yourself. The interface is very simple and for simple cases you usually only have to implement the Match function.
+You have even more freedoms if you implement the ILexerRule yourself. The interface is very simple and for simple cases you usually only have to implement the Match function.
 
 ```cs
 public interface ILexerRule
@@ -259,15 +271,15 @@ public interface ILexerRule
 }
 ```
 
-The weight just defines the precedence of the rules if more than one rule matches.
+The `Weight` just defines the precedence of the rules if more than one rule matches.
 
-IsActive is usually true except when your rule depends on the context, and you need to deactivate it.
+`IsActive` is usually true except when your rule depends on the context, then you have to write a predicate on the context.
 
 The Match function works very similar to the lexeme factory, when the rule matches it should return a lexeme, but if it does not it needs to return `Option<Lexeme>.None`.
 
 **Attention**: If you return `Option<Lexeme>.None` you should only have used Peek to inspect the underyling stream. You should not change the underlying stream by advancing it with `Retain()` or `Discard()`.
 
-This is illustrated in this simple example, where we call `Discard()` to advance the stream only when create a `Lexeme`.
+This is illustrated in this simple example, where we call `Discard()` to advance the stream only when we create a `Lexeme`.
 
 ```cs
     public Option<Lexeme> Match(ILexemeBuilder builder)
@@ -291,7 +303,7 @@ The LexerRuleBook sets up the default implementations for:
 * `ILexemeWalker`
 * `ILexemeBuilder`
 
-You change them while setting up your `LexerRuleBook` the methods start with `With` and are described in the "Configure the complex szenarios" chapter.
+You change them while setting up your `LexerRuleBook` the methods start with `With` and are described in [Configure the complex szenarios](#configure-the-complex-szenarios).
 
 ## Create your own ILinePositionCalculator
 
@@ -313,7 +325,7 @@ When registering the calculator you have access to the `lexemes`. The `lexemes` 
 
 **Scenario**: you want to manipulate the input before it is used by the logic.
 
-`ILexerReader` has two methods and a property you need to implemlent.
+`ILexerReader` has two methods and a property you need to implement.
 
 ```cs
 int Position { get; }
@@ -341,25 +353,27 @@ When registering the reader you have access to the `expression` as given to the 
 
 When registering the reader you have access to the `lexemes` and the `newEpsilonToken` factory delegate. 
 The `lexemes` is a `IReadOnlyList<Lexeme>` which is the list of all lexemes produced by the expression.
-The `newEpsilonToken` is a simple facotry which returns the configured epsilon token.
+The `newEpsilonToken` is a simple factory which returns the configured epsilon token.
 
-Usually the lexeme walker always returns a lexeme on `Pop()` and `Peek()`, even if you read past the end. In those cases the lexeme walker returns the epsilon token.
+The `ILexemeWalker` returns a lexeme on `Pop()` and `Peek()`, even if you read past the end. In those cases the `ILexemeWalker` returns the epsilon token.
 
 ```cs
-    .WithLexemeWalker((lexemes, newEpsilonToken) => new SkipLexemeWalker(lexmes, newEpsilonToken, skippables))
+    .WithLexemeWalker((lexemes, newEpsilonToken) => new SkipLexemeWalker(lexemes, newEpsilonToken, skippables))
 ```
 
 ## Create your own ILexemeBuilder
 
-**Scenario**: you want to do anything else.
+**Scenario**: If you want to do anything else not described in this document yet.
 
-By replacing the lexeme builder you are basically taking control over everything, you can ignore most of the default implementation and do whatever you want. 
+By replacing the `ILexemeBuilder` you are basically taking control over everything, you can ignore most of the default implementation and do whatever you want.
 
 *At this point you have to ask yourself, is this the right library for you?*
 
 The `ILexemeBuilder` is a bit more involved, if you really want to change this implementation refer to the source and the examples in the test.
 
-When registering the lexeme builder you have access to the `reader` and the `linePositionCalculator`. Here you have full controle to change basically everything and ignore most of the parts.
+When registering the `ILexemeBuilder` you have access to the `reader` (of type `ILexerReader`) and the `linePositionCalculator` (of type `ILinePositionCalculator`). 
+
+This means you have full control to change basically everything.
 
 ```cs
     .WithLexemeBuilder((reader, linePositionCalculator) => new FakeDigitLexemeBuilder(reader, linePositionCalculator))

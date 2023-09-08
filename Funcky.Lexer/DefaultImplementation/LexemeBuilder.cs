@@ -2,7 +2,7 @@
 using Funcky.Lexer.Token;
 using Funcky.Monads;
 
-namespace Funcky.Lexer.Default;
+namespace Funcky.Lexer.DefaultImplementation;
 
 internal sealed class LexemeBuilder : ILexemeBuilder
 {

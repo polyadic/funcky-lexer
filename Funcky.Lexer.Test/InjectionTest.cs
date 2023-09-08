@@ -38,7 +38,7 @@ public sealed class InjectionTest
     }
 
     [Fact]
-    public void UseDifferentLexmeWalker()
+    public void UseDifferentLexemeWalker()
     {
         var result = ArithmeticLexerRules.GetRules()
             .WithLexemeWalker((_, _) => new EpsilonLexemeWalker(() => new DifferentEpsilonToken()))
@@ -50,7 +50,7 @@ public sealed class InjectionTest
     }
 
     [Fact]
-    public void UseDifferentLexmeBuilder()
+    public void UseDifferentLexemeBuilder()
     {
         var result = ArithmeticLexerRules.GetRules()
             .WithLexemeBuilder((reader, linePositionCalculator) => new FakeDigitLexemeBuilder(reader, linePositionCalculator))
