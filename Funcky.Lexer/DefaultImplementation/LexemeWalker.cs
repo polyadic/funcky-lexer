@@ -4,7 +4,7 @@ using Funcky.Lexer.Token;
 
 namespace Funcky.Lexer.DefaultImplementation;
 
-internal class LexemeWalker : ILexemeWalker
+internal sealed class LexemeWalker : ILexemeWalker
 {
     private const int EpsilonLength = 0;
 

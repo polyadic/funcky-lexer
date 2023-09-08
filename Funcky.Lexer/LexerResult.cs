@@ -2,6 +2,6 @@
 
 namespace Funcky.Lexer;
 
-public record LexerResult(
+public sealed record LexerResult(
     ImmutableList<Lexeme> Lexemes,
     ILexemeWalker Walker);

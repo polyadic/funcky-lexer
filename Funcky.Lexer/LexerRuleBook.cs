@@ -8,7 +8,10 @@ using static Funcky.Functional;
 
 namespace Funcky.Lexer;
 
-public class LexerRuleBook
+/// <summary>
+/// A lexer rule book contains all the rules and factories to lex your expresssions. It has only one Method Scan() which will return the result of the lexer.
+/// </summary>
+public sealed class LexerRuleBook
 {
     private readonly ILexerReader.Factory _newLexerReader;
     private readonly ILinePositionCalculator.Factory _newLinePositionCalculator;
@@ -39,6 +42,11 @@ public class LexerRuleBook
 
     public static LexerRuleBookBuilder Builder { get; } = new();
 
+    /// <summary>
+    /// The Scan method takes a string and creates the lexemes.
+    /// </summary>
+    /// <param name="expression">The string which we want to lex into separate token.</param>
+    /// <returns>The lexer result contains the sequence of the lexemes and and a configured ILexemeWalker.</returns>
     public LexerResult Scan(string expression)
     {
         var reader = _newLexerReader(expression);
@@ -56,9 +64,7 @@ public class LexerRuleBook
 
     private Lexeme FindNextLexeme(ILexerReader reader, ImmutableList<Lexeme> context)
         => SelectLexerRule(reader, context)
-            .Match(
-                none: () => HandleUnknownToken(reader, context),
-                some: Identity);
+            .GetOrElse(() => HandleUnknownToken(reader, context));
 
     private Lexeme HandleUnknownToken(ILexerReader reader, ImmutableList<Lexeme> context)
         => throw new UnknownTokenException(reader.Peek(), CalculateCurrentLinePosition(reader.Position, context));
@@ -71,8 +77,12 @@ public class LexerRuleBook
         => _rules
             .Where(rule => rule.IsActive(context))
             .OrderByDescending(GetRuleWeight)
-            .WhereSelect(rule => rule.Match(_newLexemeBuilder(reader, _newLinePositionCalculator(context))))
+            .WhereSelect(ToMatchingRule(reader, context))
             .FirstOrNone();
+
+    private Func<ILexerRule, Option<Lexeme>> ToMatchingRule(ILexerReader reader, ImmutableList<Lexeme> context)
+        => rule
+            => rule.Match(_newLexemeBuilder(reader, _newLinePositionCalculator(context)));
 
     private static int GetRuleWeight(ILexerRule rule)
         => rule.Weight;

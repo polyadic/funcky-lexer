@@ -21,6 +21,7 @@
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
     </PropertyGroup>
     <ItemGroup Label="Code Style">
+        <PackageReference Include="Funcky.Analyzers" PrivateAssets="all" />
         <PackageReference Include="Messerli.CodeStyle" PrivateAssets="all" />
     </ItemGroup>
     <PropertyGroup Label="Code Style">

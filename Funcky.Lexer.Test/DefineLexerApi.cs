@@ -1,10 +1,21 @@
 using System.Collections.Immutable;
 using Funcky.Lexer.Test.Tokens;
+using static Funcky.Functional;
 
 namespace Funcky.Lexer.Test;
 
 public sealed class DefineLexerApi
 {
+    private const string ClassExpression = """
+        class MySuperClass
+        {
+            function DoSomething
+            {
+               let class = anything
+            }
+        }
+        """;
+
     [Fact]
     public void DefineHowTheApiShouldBeUsed()
     {
@@ -44,6 +55,54 @@ public sealed class DefineLexerApi
         Assert.Equal(new Lexeme(new EpsilonToken(), new Position(7, 1, 8, 0)), walker.Pop());
     }
 
+    [Fact]
+    public void ASimpleRuleWithContextCanOverrideAnotherRule()
+    {
+        var rules = LexerRuleBook.Builder
+            .AddSimpleRule<OpenParenthesisToken>("{")
+            .AddSimpleRule<ClosedParenthesisToken>("}")
+            .AddSimpleRule<EqualToken>("=")
+            .AddSimpleRule<NewLineToken>("\r\n")
+            .AddSimpleRule<NewLineToken>("\\n")
+            .AddRule(IsWhiteSpaceExceptNewline, ScanWhiteSpace)
+            .AddRule(char.IsLetter, ScanIdentifier)
+            .AddSimpleRuleWithContext<ClassToken>("class", context => context.All(lexeme => lexeme is not { Token: ClassToken }), 1)
+            .WithEpsilonToken<EpsilonToken>()
+            .Build();
+
+        var result = rules.Scan(ClassExpression);
+
+        Assert.Collection(
+            result.Lexemes,
+            lexeme => Assert.Equal(new Lexeme(new ClassToken(), new Position(0, 1, 1, 5)), lexeme),
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            lexeme => Assert.Equal(new Lexeme(new OpenParenthesisToken(), new Position(20, 2, 1, 1)), lexeme),
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            lexeme => Assert.Equal(new Lexeme(new IdentifierToken("class"), new Position(67, 5, 12, 5)), lexeme),
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            lexeme => Assert.Equal(new Lexeme(new ClosedParenthesisToken(), new Position(92, 7, 1, 1)), lexeme));
+    }
+
     private static Lexeme ScanNumber(ILexemeBuilder builder)
         => builder.Peek().Match(none: false, some: char.IsDigit)
             ? ScanNumber(builder.Retain())
@@ -53,4 +112,12 @@ public sealed class DefineLexerApi
         => builder.Peek().Match(none: false, some: char.IsLetterOrDigit)
             ? ScanIdentifier(builder.Retain())
             : builder.Build(new IdentifierToken(builder.CurrentToken));
+
+    private static Lexeme ScanWhiteSpace(ILexemeBuilder builder)
+        => builder.Peek().Match(none: false, some: char.IsWhiteSpace)
+            ? ScanWhiteSpace(builder.Discard())
+            : builder.Build(new WhiteSpaceToken());
+
+    private static bool IsWhiteSpaceExceptNewline(char c)
+        => char.IsWhiteSpace(c) && c is not '\r' and not '\n';
 }

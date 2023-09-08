@@ -2,7 +2,7 @@
 
 namespace Funcky.Lexer.Default;
 
-internal class LexerReader : ILexerReader
+internal sealed class LexerReader : ILexerReader
 {
     private readonly string _expression;
 

@@ -1,31 +1,28 @@
 ﻿using Funcky.Monads;
-using static Funcky.Functional;
 
 namespace Funcky.Lexer.Rules;
 
 internal sealed class LexerRuleWithContext : ILexerRule
 {
+    private readonly Predicate<IReadOnlyList<Lexeme>> _contextPredicate;
+    private readonly Predicate<char> _symbolPredicate;
+    private readonly Lexeme.Factory _createLexeme;
+
     public LexerRuleWithContext(Predicate<char> symbolPredicate, Predicate<IReadOnlyList<Lexeme>> contextPredicate, Lexeme.Factory createLexeme, int weight)
-        => (SymbolPredicate, ContextPredicate, CreateLexeme, Weight)
+        => (_symbolPredicate, _contextPredicate, _createLexeme, Weight)
             = (symbolPredicate, contextPredicate, createLexeme, weight);
-
-    public Predicate<char> SymbolPredicate { get; }
-
-    public Predicate<IReadOnlyList<Lexeme>> ContextPredicate { get; }
-
-    public Lexeme.Factory CreateLexeme { get; }
 
     public int Weight { get; }
 
     public Option<Lexeme> Match(ILexemeBuilder builder)
-        => ApplyPredicate(builder).Match(none: false, some: Identity)
-            ? CreateLexeme(builder)
+        => ApplyPredicate(builder).GetOrElse(false)
+            ? _createLexeme(builder)
             : Option<Lexeme>.None;
 
     public bool IsActive(IReadOnlyList<Lexeme> context)
-        => ContextPredicate(context);
+        => _contextPredicate(context);
 
     private Option<bool> ApplyPredicate(ILexemeBuilder builder)
         => from nextCharacter in builder.Peek()
-           select SymbolPredicate(nextCharacter);
+           select _symbolPredicate(nextCharacter);
 }

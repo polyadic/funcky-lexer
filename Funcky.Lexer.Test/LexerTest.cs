@@ -1,6 +1,8 @@
 ﻿using Funcky.Lexer.Exceptions;
 using Funcky.Lexer.Test.LexerRules;
 using Funcky.Lexer.Test.Tokens;
+using Funcky.Lexer.Token;
+using static Funcky.Functional;
 
 namespace Funcky.Lexer.Test;
 
@@ -113,5 +115,29 @@ public sealed class LexerTest
             .Build();
 
         Assert.IsType<EpsilonToken>(rules.Scan(string.Empty).Walker.Peek().Token);
+    }
+
+    [Fact]
+    public void ARuleWithAHigherPrecedenceIsFavored()
+    {
+        var rules = LexerRuleBook.Builder
+            .AddRule(char.IsLetter, CreatePrecedenceToken<Low>, 10)
+            .AddRule(char.IsLetter, CreatePrecedenceToken<High>, 30)
+            .AddRule(char.IsLetter, CreatePrecedenceToken<Medium>, 20)
+            .WithEpsilonToken<EpsilonToken>()
+            .Build();
+
+        Assert.IsType<High>(rules.Scan("string").Walker.Peek().Token);
+    }
+
+    private static Lexeme CreatePrecedenceToken<TToken>(ILexemeBuilder builder)
+        where TToken : IToken, new()
+    {
+        while (builder.Peek().Match(none: false, some: True))
+        {
+            builder.Discard();
+        }
+
+        return builder.Build(new TToken());
     }
 }

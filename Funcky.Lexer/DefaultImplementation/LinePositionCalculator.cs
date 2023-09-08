@@ -5,7 +5,7 @@ using Funcky.Monads;
 
 namespace Funcky.Lexer.Default;
 
-internal class LinePositionCalculator : ILinePositionCalculator
+internal sealed class LinePositionCalculator : ILinePositionCalculator
 {
     private readonly ImmutableList<int> _newLines;
 

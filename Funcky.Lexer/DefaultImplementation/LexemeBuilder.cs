@@ -4,7 +4,7 @@ using Funcky.Monads;
 
 namespace Funcky.Lexer.Default;
 
-internal class LexemeBuilder : ILexemeBuilder
+internal sealed class LexemeBuilder : ILexemeBuilder
 {
     private readonly ILinePositionCalculator _linePositionCalculator;
     private readonly int _startPosition;

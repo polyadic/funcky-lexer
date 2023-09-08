@@ -1,6 +1,5 @@
 ﻿using Funcky.Extensions;
 using Funcky.Lexer.Test.Tokens;
-using static Funcky.Functional;
 
 namespace Funcky.Lexer.Test.LexerRules;
 
@@ -40,9 +39,7 @@ public static class ArithmeticLexerRules
     private static bool IsDot(ILexemeBuilder builder)
         => builder.Peek()
             .Select(character => character is '.')
-            .Match(
-                none: false,
-                some: Identity);
+            .GetOrElse(false);
 
     private static bool IsDoubleDigitCharacter(ILexemeBuilder builder)
         => builder.Peek().Match(none: false, some: char.IsDigit)
@@ -51,9 +48,7 @@ public static class ArithmeticLexerRules
     private static double ParsedDouble(ILexemeBuilder builder)
         => builder.CurrentToken
             .ParseDoubleOrNone()
-            .Match(
-                none: () => throw new Exception("Could not parse number: " + builder.CurrentToken),
-                some: Identity);
+            .GetOrElse(() => throw new Exception("Could not parse number: " + builder.CurrentToken));
 
     private static Lexeme ScanIdentifier(ILexemeBuilder builder)
         => builder.Peek().Match(none: false, some: char.IsLetterOrDigit)

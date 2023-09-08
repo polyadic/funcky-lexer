@@ -13,12 +13,15 @@ public interface ILexerRuleBookBuilder
     /// <summary>
     /// Add a generic rule based on a predicate and a Lexeme.Factory.
     /// </summary>
-    ILexerRuleBookBuilder AddRule(Predicate<char> predicate, Lexeme.Factory createLexeme, int weight = 0);
+    ILexerRuleBookBuilder AddRule(Predicate<char> symbolPredicate, Lexeme.Factory createLexeme, int weight = 0);
 
     ILexerRuleBookBuilder AddSimpleRule<TToken>(string textSymbol)
         where TToken : IToken, new();
 
     ILexerRuleBookBuilder AddRuleWithContext(Predicate<char> symbolPredicate, Predicate<IReadOnlyList<Lexeme>> contextPredicate, Lexeme.Factory createLexeme, int weight);
+
+    ILexerRuleBookBuilder AddSimpleRuleWithContext<TToken>(string textSymbol, Predicate<IReadOnlyList<Lexeme>> contextPredicate, int weight)
+        where TToken : IToken, new();
 
     ILexerRuleBookBuilder WithLexerReader(ILexerReader.Factory newLexerReader);
 

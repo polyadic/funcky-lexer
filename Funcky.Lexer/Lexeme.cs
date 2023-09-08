@@ -7,7 +7,7 @@ namespace Funcky.Lexer;
 /// </summary>
 /// <param name="Token">A token is an abstract way to represent a specfic arrangment of characters.</param>
 /// <param name="Position">The position represents the location of the arrangement of charcters from the beginning to the end.</param>
-public record Lexeme(
+public sealed record Lexeme(
     IToken Token,
     Position Position)
 {

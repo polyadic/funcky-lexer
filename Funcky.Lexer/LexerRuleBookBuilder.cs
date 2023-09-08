@@ -9,7 +9,7 @@ using Funcky.Monads;
 
 namespace Funcky.Lexer;
 
-public record LexerRuleBookBuilder : ILexerRuleBookBuilder
+public sealed record LexerRuleBookBuilder : ILexerRuleBookBuilder
 {
     private ILexerReader.Factory NewLexerReader { get; init; } = ILexerReader.DefaultFactory;
 
@@ -31,11 +31,11 @@ public record LexerRuleBookBuilder : ILexerRuleBookBuilder
     ILexerRuleBookBuilder ILexerRuleBookBuilder.AddRule(ILexerRule rule)
         => AddRule(rule);
 
-    public LexerRuleBookBuilder AddRule(Predicate<char> predicate, Lexeme.Factory createLexeme, int weight = 0)
-        => this with { Rules = Rules.Add(new LexerRule(predicate, createLexeme, weight)) };
+    public LexerRuleBookBuilder AddRule(Predicate<char> symbolPredicate, Lexeme.Factory createLexeme, int weight = 0)
+        => this with { Rules = Rules.Add(new LexerRule(symbolPredicate, createLexeme, weight)) };
 
-    ILexerRuleBookBuilder ILexerRuleBookBuilder.AddRule(Predicate<char> predicate, Lexeme.Factory createLexeme, int weight)
-       => AddRule(predicate, createLexeme, weight);
+    ILexerRuleBookBuilder ILexerRuleBookBuilder.AddRule(Predicate<char> symbolPredicate, Lexeme.Factory createLexeme, int weight)
+       => AddRule(symbolPredicate, createLexeme, weight);
 
     /// <summary>
     /// This is the simplest way to define Rule, it translates any static string into a corresponding Token.
@@ -48,6 +48,13 @@ public record LexerRuleBookBuilder : ILexerRuleBookBuilder
 
     ILexerRuleBookBuilder ILexerRuleBookBuilder.AddSimpleRule<TToken>(string textSymbol)
         => AddSimpleRule<TToken>(textSymbol);
+
+    public LexerRuleBookBuilder AddSimpleRuleWithContext<TToken>(string textSymbol, Predicate<IReadOnlyList<Lexeme>> contextPredicate, int weight)
+        where TToken : IToken, new()
+        => this with { Rules = Rules.Add(new SimpleLexerRuleWithContext<TToken>(textSymbol, contextPredicate, weight)) };
+
+    ILexerRuleBookBuilder ILexerRuleBookBuilder.AddSimpleRuleWithContext<TToken>(string textSymbol, Predicate<IReadOnlyList<Lexeme>> contextPredicate, int weight)
+        => AddSimpleRuleWithContext<TToken>(textSymbol, contextPredicate, weight);
 
     public LexerRuleBookBuilder AddRuleWithContext(Predicate<char> symbolPredicate, Predicate<IReadOnlyList<Lexeme>> contextPredicate, Lexeme.Factory createLexeme, int weight)
         => this with { Rules = Rules.Add(new LexerRuleWithContext(symbolPredicate, contextPredicate, createLexeme, weight)) };
@@ -114,5 +121,4 @@ public record LexerRuleBookBuilder : ILexerRuleBookBuilder
 #else
         => throw new Exception("unreachable: protected by type system");
 #endif
-
 }

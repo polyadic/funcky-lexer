@@ -13,5 +13,5 @@ public sealed class UnknownTokenException : LexerException
     public Position Position { get; }
 
     private static char ToName(Option<char> token)
-        => token.Match(none: 'Ɛ', some: Functional.Identity);
+        => token.GetOrElse('Ɛ');
 }
