@@ -63,7 +63,7 @@ public sealed class DefineLexerApi
             .AddSimpleRule<ClosedParenthesisToken>("}")
             .AddSimpleRule<EqualToken>("=")
             .AddSimpleRule<NewLineToken>("\r\n")
-            .AddSimpleRule<NewLineToken>("\\n")
+            .AddSimpleRule<NewLineToken>("\n")
             .AddRule(IsWhiteSpaceExceptNewline, ScanWhiteSpace)
             .AddRule(char.IsLetter, ScanIdentifier)
             .AddSimpleRuleWithContext<ClassToken>("class", context => context.All(lexeme => lexeme is not { Token: ClassToken }), 1)
