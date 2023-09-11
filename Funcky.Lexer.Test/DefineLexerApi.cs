@@ -6,15 +6,7 @@ namespace Funcky.Lexer.Test;
 
 public sealed class DefineLexerApi
 {
-    private const string ClassExpression = """
-        class MySuperClass
-        {
-            function DoSomething
-            {
-               let class = anything
-            }
-        }
-        """;
+    private const string ClassExpression = "class MySuperClass\r\n{\r\n    function DoSomething\r\n    {\r\n       let class = anything\r\n    }\r\n}";
 
     [Fact]
     public void DefineHowTheApiShouldBeUsed()
