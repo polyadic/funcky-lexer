@@ -2,6 +2,7 @@
 
 Can you write a lexer in a single expression? Now you can.
 
+[![Build](https://github.com/polyadic/funcky-lexer/actions/workflows/dotnet.yml/badge.svg)](https://github.com/polyadic/funcky-lexer/actions/workflows/dotnet.yml)
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-green)](https://raw.githubusercontent.com/polyadic/funcky/main/LICENSE-MIT)
 [![Licence: Apache](https://img.shields.io/badge/licence-Apache-green)](https://raw.githubusercontent.com/polyadic/funcky/main/LICENSE-Apache)
 
