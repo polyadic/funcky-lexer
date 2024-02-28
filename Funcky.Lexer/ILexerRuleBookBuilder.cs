@@ -25,8 +25,6 @@ public interface ILexerRuleBookBuilder
 
     ILexerRuleBookBuilder WithLexerReader(ILexerReader.Factory newLexerReader);
 
-    ILexerRuleBookBuilder WithLinePositionCalculator(ILinePositionCalculator.Factory newLinePositionCalculator);
-
     ILexerRuleBookBuilder WithLexemeWalker(ILexemeWalker.Factory newLexemeWalker);
 
     ILexerRuleBookBuilder WithLexemeBuilder(ILexemeBuilder.Factory newLexemeBuilder);

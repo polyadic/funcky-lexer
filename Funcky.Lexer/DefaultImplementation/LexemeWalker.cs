@@ -14,8 +14,8 @@ internal sealed class LexemeWalker(IReadOnlyList<Lexeme> lexemes, IEpsilonToken.
     private Position EpsilonAbsolutePosition
         => lexemes.LastOrNone()
             .Match(
-                none: new Position(0, 1, 1, EpsilonLength),
-                some: lexem => new Position(lexem.Position.EndPosition, lexem.Position.Line, lexem.Position.EndColumn, EpsilonLength));
+                none: new Position(0, EpsilonLength, LineAnchor.DocumentStart),
+                some: lexem => new Position(lexem.Position.EndPosition, EpsilonLength, lexem.Position.LineBeginnig));
 
     public Lexeme Pop()
         => ValidToken()

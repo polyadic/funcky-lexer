@@ -13,8 +13,8 @@ namespace Funcky.Lexer;
 /// </summary>
 public sealed class LexerRuleBook
 {
+    private const int LengthOfCharacter = 1;
     private readonly ILexerReader.Factory _newLexerReader;
-    private readonly ILinePositionCalculator.Factory _newLinePositionCalculator;
     private readonly ILexemeBuilder.Factory _newLexemeBuilder;
     private readonly ILexemeWalker.Factory _newLexemeWalker;
     private readonly IEpsilonToken.Factory _newEpsilonToken;
@@ -24,7 +24,6 @@ public sealed class LexerRuleBook
 
     internal LexerRuleBook(
         ILexerReader.Factory newLexerReader,
-        ILinePositionCalculator.Factory newLinePositionCalculator,
         ILexemeBuilder.Factory newLexemeBuilder,
         ILexemeWalker.Factory newLexemeWalker,
         IEpsilonToken.Factory newEpsilonToken,
@@ -32,7 +31,6 @@ public sealed class LexerRuleBook
         ImmutableList<ILexerRule> rules)
     {
         _newLexerReader = newLexerReader;
-        _newLinePositionCalculator = newLinePositionCalculator;
         _newLexemeBuilder = newLexemeBuilder;
         _newLexemeWalker = newLexemeWalker;
         _newEpsilonToken = newEpsilonToken;
@@ -58,31 +56,44 @@ public sealed class LexerRuleBook
     }
 
     private ImmutableList<Lexeme> CreateLexemes(ILexerReader reader)
-        => Sequence.Cycle(Unit.Value)
-            .TakeWhile(_ => reader.Peek().Match(none: false, some: True))
-            .Aggregate(ImmutableList<Lexeme>.Empty, (lexemes, _) => lexemes.Add(FindNextLexeme(reader, lexemes)));
+    {
+        var lexemes = ImmutableList<Lexeme>.Empty;
+        var currentLine = LineAnchor.DocumentStart;
 
-    private Lexeme FindNextLexeme(ILexerReader reader, ImmutableList<Lexeme> context)
-        => SelectLexerRule(reader, context)
-            .GetOrElse(() => HandleUnknownToken(reader, context));
+        while (HasTokensLeft(reader))
+        {
+            var lexeme = FindNextLexeme(reader, lexemes, currentLine);
 
-    private Lexeme HandleUnknownToken(ILexerReader reader, ImmutableList<Lexeme> context)
-        => throw new UnknownTokenException(reader.Peek(), CalculateCurrentLinePosition(reader.Position, context));
+            lexemes = lexemes.Add(lexeme);
+            if (lexeme.Token is ILineBreakToken)
+            {
+                currentLine = new LineAnchor(currentLine.Line + 1, lexeme.Position.EndPosition);
+            }
+        }
 
-    private Position CalculateCurrentLinePosition(int position, ImmutableList<Lexeme> context)
-        => _newLinePositionCalculator(context)
-            .CalculateLinePosition(position, 1);
+        return lexemes;
+    }
 
-    private Option<Lexeme> SelectLexerRule(ILexerReader reader, ImmutableList<Lexeme> context)
+    private static bool HasTokensLeft(ILexerReader reader)
+        => reader.Peek().Match(none: false, some: True);
+
+    private Lexeme FindNextLexeme(ILexerReader reader, ImmutableList<Lexeme> context, LineAnchor currentLine)
+        => SelectLexerRule(reader, context, currentLine)
+            .GetOrElse(() => HandleUnknownToken(reader, currentLine));
+
+    private static Lexeme HandleUnknownToken(ILexerReader reader, LineAnchor currentLine)
+        => throw new UnknownTokenException(reader.Peek(), new Position(reader.Position, LengthOfCharacter, currentLine));
+
+    private Option<Lexeme> SelectLexerRule(ILexerReader reader, ImmutableList<Lexeme> context, LineAnchor currentLine)
         => _rules
             .Where(rule => rule.IsActive(context))
             .OrderByDescending(GetRuleWeight)
-            .WhereSelect(ToMatchingRule(reader, context))
+            .WhereSelect(ToMatchingRule(reader, currentLine))
             .FirstOrNone();
 
-    private Func<ILexerRule, Option<Lexeme>> ToMatchingRule(ILexerReader reader, ImmutableList<Lexeme> context)
+    private Func<ILexerRule, Option<Lexeme>> ToMatchingRule(ILexerReader reader, LineAnchor currentLine)
         => rule
-            => rule.Match(_newLexemeBuilder(reader, _newLinePositionCalculator(context)));
+            => rule.Match(_newLexemeBuilder(reader, currentLine));
 
     private static int GetRuleWeight(ILexerRule rule)
         => rule.Weight;

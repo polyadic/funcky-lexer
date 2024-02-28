@@ -4,7 +4,7 @@ using Funcky.Monads;
 
 namespace Funcky.Lexer.DefaultImplementation;
 
-internal sealed class LexemeBuilder(ILexerReader reader, ILinePositionCalculator linePositionCalculator)
+internal sealed class LexemeBuilder(ILexerReader reader, LineAnchor currentLine)
     : ILexemeBuilder
 {
     private readonly int _startPosition = reader.Position;
@@ -16,10 +16,13 @@ internal sealed class LexemeBuilder(ILexerReader reader, ILinePositionCalculator
     public int Position
         => reader.Position;
 
+    private int Length
+        => reader.Position - _startPosition;
+
     public Lexeme Build(IToken token)
         => new(
             Token: token,
-            Position: linePositionCalculator.CalculateLinePosition(_startPosition, Length()));
+            Position: new Position(_startPosition, Length, currentLine));
 
     public Option<char> Peek(int lookAhead = 0)
         => reader.Peek(lookAhead);
@@ -44,7 +47,4 @@ internal sealed class LexemeBuilder(ILexerReader reader, ILinePositionCalculator
 
         return this;
     }
-
-    private int Length()
-        => reader.Position - _startPosition;
 }
