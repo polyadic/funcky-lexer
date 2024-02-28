@@ -2,13 +2,8 @@
 
 namespace Funcky.Lexer.DefaultImplementation;
 
-internal sealed class LexerReader : ILexerReader
+internal sealed class LexerReader(string expression) : ILexerReader
 {
-    private readonly string _expression;
-
-    public LexerReader(string expression)
-        => _expression = expression;
-
     public int Position { get; private set; }
 
     public Option<char> Peek(int lookAhead = 0)
@@ -24,7 +19,7 @@ internal sealed class LexerReader : ILexerReader
     }
 
     private Option<char> PeekAt(int position)
-        => position >= 0 && position < _expression.Length
-            ? _expression[position]
+        => position >= 0 && position < expression.Length
+            ? expression[position]
             : Option<char>.None;
 }

@@ -2,15 +2,12 @@
 
 namespace Funcky.Lexer.Exceptions;
 
-public sealed class UnknownTokenException : LexerException
+public sealed class UnknownTokenException(Option<char> token, Position position)
+    : LexerException($"Unknown Token '{ToName(token)}' at Line {position.Line} Column {position.StartColumn}")
 {
-    public UnknownTokenException(Option<char> token, Position position)
-        : base($"Unknown Token '{ToName(token)}' at Line {position.Line} Column {position.StartColumn}")
-        => (Token, Position) = (token, position);
+    public Option<char> Token { get; } = token;
 
-    public Option<char> Token { get; }
-
-    public Position Position { get; }
+    public Position Position { get; } = position;
 
     private static char ToName(Option<char> token)
         => token.GetOrElse('Ɛ');
