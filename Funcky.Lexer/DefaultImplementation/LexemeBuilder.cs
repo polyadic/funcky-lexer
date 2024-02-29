@@ -4,44 +4,36 @@ using Funcky.Monads;
 
 namespace Funcky.Lexer.DefaultImplementation;
 
-internal sealed class LexemeBuilder : ILexemeBuilder
+internal sealed class LexemeBuilder(ILexerReader reader, ILinePositionCalculator linePositionCalculator)
+    : ILexemeBuilder
 {
-    private readonly ILinePositionCalculator _linePositionCalculator;
-    private readonly int _startPosition;
+    private readonly int _startPosition = reader.Position;
     private readonly StringBuilder _stringBuilder = new();
-    private readonly ILexerReader _reader;
-
-    public LexemeBuilder(ILexerReader reader, ILinePositionCalculator linePositionCalculator)
-    {
-        _linePositionCalculator = linePositionCalculator;
-        _startPosition = reader.Position;
-        _reader = reader;
-    }
 
     public string CurrentToken
         => _stringBuilder.ToString();
 
     public int Position
-        => _reader.Position;
+        => reader.Position;
 
     public Lexeme Build(IToken token)
         => new(
             Token: token,
-            Position: _linePositionCalculator.CalculateLinePosition(_startPosition, Length()));
+            Position: linePositionCalculator.CalculateLinePosition(_startPosition, Length()));
 
     public Option<char> Peek(int lookAhead = 0)
-        => _reader.Peek(lookAhead);
+        => reader.Peek(lookAhead);
 
     public ILexemeBuilder Retain()
     {
-        _ = _reader.Read().AndThen(_stringBuilder.Append);
+        _ = reader.Read().AndThen(_stringBuilder.Append);
 
         return this;
     }
 
     public ILexemeBuilder Discard()
     {
-        _reader.Read();
+        reader.Read();
 
         return this;
     }
@@ -54,5 +46,5 @@ internal sealed class LexemeBuilder : ILexemeBuilder
     }
 
     private int Length()
-        => _reader.Position - _startPosition;
+        => reader.Position - _startPosition;
 }

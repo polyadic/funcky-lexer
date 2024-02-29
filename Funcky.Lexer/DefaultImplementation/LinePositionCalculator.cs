@@ -5,14 +5,11 @@ using Funcky.Monads;
 
 namespace Funcky.Lexer.DefaultImplementation;
 
-internal sealed class LinePositionCalculator : ILinePositionCalculator
+internal sealed class LinePositionCalculator(IEnumerable<Lexeme> lexemes) : ILinePositionCalculator
 {
-    private readonly ImmutableList<int> _newLines;
-
-    public LinePositionCalculator(IEnumerable<Lexeme> lexemes)
-        => _newLines = lexemes
-            .WhereSelect(ToLineBreakPosition)
-            .ToImmutableList();
+    private readonly ImmutableList<int> _newLines = lexemes
+        .WhereSelect(ToLineBreakPosition)
+        .ToImmutableList();
 
     public Position CalculateLinePosition(int absolutePosition, int length)
         => new(
