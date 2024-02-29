@@ -44,7 +44,7 @@ public sealed class LexerRuleBook
     /// The Scan method takes a string and creates the lexemes.
     /// </summary>
     /// <param name="expression">The string which we want to lex into separate token.</param>
-    /// <returns>The lexer result contains the sequence of the lexemes and and a configured ILexemeWalker.</returns>
+    /// <returns>The lexer result contains the sequence of the lexemes and a configured ILexemeWalker.</returns>
     public LexerResult Scan(string expression)
     {
         var reader = _newLexerReader(expression);
@@ -56,23 +56,22 @@ public sealed class LexerRuleBook
     }
 
     private ImmutableList<Lexeme> CreateLexemes(ILexerReader reader)
-    {
-        var lexemes = ImmutableList<Lexeme>.Empty;
-        var currentLine = LineAnchor.DocumentStart;
+        => Sequence.Cycle(Unit.Value)
+            .TakeWhile(_ => HasTokensLeft(reader))
+            .Aggregate(LexemeAggregate.Empty, AggregateLexeme(reader))
+            .Lexemes;
 
-        while (HasTokensLeft(reader))
-        {
-            var lexeme = FindNextLexeme(reader, lexemes, currentLine);
+    private Func<LexemeAggregate, Unit, LexemeAggregate> AggregateLexeme(ILexerReader reader)
+        => (result, _)
+            => NextAggregate(FindNextLexeme(reader, result.Lexemes, result.CurrentLine), result);
 
-            lexemes = lexemes.Add(lexeme);
-            if (lexeme.Token is ILineBreakToken)
-            {
-                currentLine = new LineAnchor(currentLine.Line + 1, lexeme.Position.EndPosition);
-            }
-        }
+    private static LexemeAggregate NextAggregate(Lexeme lexeme, LexemeAggregate result)
+        => new(result.Lexemes.Add(lexeme), UpdateLineOnLineBreak(result, lexeme));
 
-        return lexemes;
-    }
+    private static LineAnchor UpdateLineOnLineBreak(LexemeAggregate result, Lexeme lexeme)
+        => lexeme.Token is ILineBreakToken
+            ? new LineAnchor(result.CurrentLine.Line + 1, lexeme.Position.EndPosition)
+            : result.CurrentLine;
 
     private static bool HasTokensLeft(ILexerReader reader)
         => reader.Peek().Match(none: false, some: True);
@@ -97,4 +96,9 @@ public sealed class LexerRuleBook
 
     private static int GetRuleWeight(ILexerRule rule)
         => rule.Weight;
+
+    private record LexemeAggregate(ImmutableList<Lexeme> Lexemes, LineAnchor CurrentLine)
+    {
+        public static LexemeAggregate Empty { get; } = new(ImmutableList<Lexeme>.Empty, LineAnchor.DocumentStart);
+    }
 }
