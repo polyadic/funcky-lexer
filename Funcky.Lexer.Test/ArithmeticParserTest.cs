@@ -32,7 +32,7 @@ public sealed class ArithmeticParserTest
                     new(new PlusToken(), new Position(8, 1, LineAnchor.DocumentStart)),
                     new(new NumberToken(30), new Position(9, 2, LineAnchor.DocumentStart)),
                     new(new ClosedParenthesisToken(), new Position(11, 1, LineAnchor.DocumentStart)),
-                    new(new EpsilonToken(), new Position(12, 0, LineAnchor.DocumentStart))
+                    new(new EpsilonToken(), new Position(12, 0, LineAnchor.DocumentStart)),
                 ]
             },
             {
@@ -41,7 +41,7 @@ public sealed class ArithmeticParserTest
                     new(new OpenParenthesisToken(), new Position(0, 1, LineAnchor.DocumentStart)),
                     new(new NumberToken(42.1337), new Position(1, 7, LineAnchor.DocumentStart)),
                     new(new ClosedParenthesisToken(), new Position(8, 1, LineAnchor.DocumentStart)),
-                    new(new EpsilonToken(), new Position(9, 0, LineAnchor.DocumentStart))
+                    new(new EpsilonToken(), new Position(9, 0, LineAnchor.DocumentStart)),
                 ]
             },
             {
