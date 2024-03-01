@@ -6,6 +6,7 @@ using System.Diagnostics;
 using Funcky.Lexer.Rules;
 using Funcky.Lexer.Token;
 using Funcky.Monads;
+using static Funcky.Lexer.Constants;
 
 namespace Funcky.Lexer;
 
@@ -29,7 +30,7 @@ public sealed record LexerRuleBookBuilder : ILexerRuleBookBuilder
     ILexerRuleBookBuilder ILexerRuleBookBuilder.AddRule(ILexerRule rule)
         => AddRule(rule);
 
-    public LexerRuleBookBuilder AddRule(Predicate<char> symbolPredicate, Lexeme.Factory createLexeme, int weight = 0)
+    public LexerRuleBookBuilder AddRule(Predicate<char> symbolPredicate, Lexeme.Factory createLexeme, int weight = DefaultWeight)
         => this with { Rules = Rules.Add(new LexerRule(symbolPredicate, createLexeme, weight)) };
 
     ILexerRuleBookBuilder ILexerRuleBookBuilder.AddRule(Predicate<char> symbolPredicate, Lexeme.Factory createLexeme, int weight)

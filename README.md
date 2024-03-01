@@ -78,7 +78,7 @@ You always start with an empty `LexerRuleBook.Builder` which is already in its d
 
 You can add rules with the following methods:
 
-* `AddRule(Predicate<char> symbolPredicate, Lexeme.Factory createLexeme, int weight = 0)`
+* `AddRule(Predicate<char> symbolPredicate, Lexeme.Factory createLexeme, int weight = DefaultWeight)`
 * `AddSimpleRule<TToken>(string textSymbol)`
 * `AddRuleWithContext(Predicate<char> symbolPredicate, Predicate<IReadOnlyList<Lexeme>> contextPredicate, Lexeme.Factory createLexeme, int weight)`
 * `AddSimpleRuleWithContext<TToken>(string textSymbol, Predicate<IReadOnlyList<Lexeme>> contextPredicate, int weight)`
@@ -159,7 +159,7 @@ The `ILexemeBuilder` helps you to create the lexeme, it keeps the state and auto
 The most important function to investigate is the `Peek` function. It gives you the current (or any later) character or it will return `Option<char>.None` if you are at the end of the expression.
 
 ```cs
-Option<char> Peek(int lookAhead = 0);
+Option<char> Peek(int lookAhead = NoLookAhead);
 ```
 
 The `Peek` function does not advance the position, to advance the `Position` there are the `Retain()` and `Discard()` methods.
@@ -319,7 +319,7 @@ You change them while setting up your `LexerRuleBook` the methods start with `Wi
 
 ```cs
 int Position { get; }
-Option<char> Peek(int lookAhead = 0);
+Option<char> Peek(int lookAhead = NoLookAhead);
 Option<char> Read();
 ```
 
@@ -338,7 +338,7 @@ When registering the reader you have access to the `expression` as given to the 
 
 ```cs
     Lexeme Pop();
-    Lexeme Peek(int lookAhead = 0);
+    Lexeme Peek(int lookAhead = NoLookAhead);
 ```
 
 When registering the reader you have access to the `lexemes` and the `newEpsilonToken` factory delegate. 

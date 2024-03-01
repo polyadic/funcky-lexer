@@ -1,5 +1,6 @@
 ﻿using Funcky.Lexer.Rules;
 using Funcky.Lexer.Token;
+using static Funcky.Lexer.Constants;
 
 namespace Funcky.Lexer;
 
@@ -13,7 +14,7 @@ public interface ILexerRuleBookBuilder
     /// <summary>
     /// Add a generic rule based on a predicate and a Lexeme.Factory.
     /// </summary>
-    ILexerRuleBookBuilder AddRule(Predicate<char> symbolPredicate, Lexeme.Factory createLexeme, int weight = 0);
+    ILexerRuleBookBuilder AddRule(Predicate<char> symbolPredicate, Lexeme.Factory createLexeme, int weight = DefaultWeight);
 
     ILexerRuleBookBuilder AddSimpleRule<TToken>(string textSymbol)
         where TToken : IToken, new();

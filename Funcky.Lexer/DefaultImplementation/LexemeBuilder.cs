@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Funcky.Lexer.Token;
 using Funcky.Monads;
+using static Funcky.Lexer.Constants;
 
 namespace Funcky.Lexer.DefaultImplementation;
 
@@ -24,7 +25,7 @@ internal sealed class LexemeBuilder(ILexerReader reader, LineAnchor currentLine)
             Token: token,
             Position: new Position(_startPosition, Length, currentLine));
 
-    public Option<char> Peek(int lookAhead = 0)
+    public Option<char> Peek(int lookAhead = NoLookAhead)
         => reader.Peek(lookAhead);
 
     public ILexemeBuilder Retain()
