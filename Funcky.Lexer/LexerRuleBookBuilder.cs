@@ -6,14 +6,13 @@ using System.Diagnostics;
 using Funcky.Lexer.Rules;
 using Funcky.Lexer.Token;
 using Funcky.Monads;
+using static Funcky.Lexer.Constants;
 
 namespace Funcky.Lexer;
 
 public sealed record LexerRuleBookBuilder : ILexerRuleBookBuilder
 {
     private ILexerReader.Factory NewLexerReader { get; init; } = ILexerReader.DefaultFactory;
-
-    private ILinePositionCalculator.Factory NewLinePositionCalculator { get; init; } = ILinePositionCalculator.DefaultFactory;
 
     private ILexemeBuilder.Factory NewLexemeBuilder { get; init; } = ILexemeBuilder.DefaultFactory;
 
@@ -31,7 +30,7 @@ public sealed record LexerRuleBookBuilder : ILexerRuleBookBuilder
     ILexerRuleBookBuilder ILexerRuleBookBuilder.AddRule(ILexerRule rule)
         => AddRule(rule);
 
-    public LexerRuleBookBuilder AddRule(Predicate<char> symbolPredicate, Lexeme.Factory createLexeme, int weight = 0)
+    public LexerRuleBookBuilder AddRule(Predicate<char> symbolPredicate, Lexeme.Factory createLexeme, int weight = DefaultWeight)
         => this with { Rules = Rules.Add(new LexerRule(symbolPredicate, createLexeme, weight)) };
 
     ILexerRuleBookBuilder ILexerRuleBookBuilder.AddRule(Predicate<char> symbolPredicate, Lexeme.Factory createLexeme, int weight)
@@ -68,12 +67,6 @@ public sealed record LexerRuleBookBuilder : ILexerRuleBookBuilder
     ILexerRuleBookBuilder ILexerRuleBookBuilder.WithLexerReader(ILexerReader.Factory newLexerReader)
         => WithLexerReader(newLexerReader);
 
-    public LexerRuleBookBuilder WithLinePositionCalculator(ILinePositionCalculator.Factory newLinePositionCalculator)
-        => this with { NewLinePositionCalculator = newLinePositionCalculator };
-
-    ILexerRuleBookBuilder ILexerRuleBookBuilder.WithLinePositionCalculator(ILinePositionCalculator.Factory newLinePositionCalculator)
-        => WithLinePositionCalculator(newLinePositionCalculator);
-
     public LexerRuleBookBuilder WithLexemeWalker(ILexemeWalker.Factory newLexemeWalker)
        => this with { NewLexemeWalker = newLexemeWalker };
 
@@ -99,7 +92,6 @@ public sealed record LexerRuleBookBuilder : ILexerRuleBookBuilder
     LexerRuleBook ILexerRuleBookBuilder.Build()
         => new(
             newLexerReader: NewLexerReader,
-            newLinePositionCalculator: NewLinePositionCalculator,
             newLexemeBuilder: NewLexemeBuilder,
             newLexemeWalker: NewLexemeWalker,
             newEpsilonToken: NewEpsilonToken.GetOrElse(ThrowUnreachable<IEpsilonToken.Factory>),

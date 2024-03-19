@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Funcky.Extensions;
 using Funcky.Lexer.Token;
+using static Funcky.Lexer.Constants;
 
 namespace Funcky.Lexer.DefaultImplementation;
 
@@ -14,15 +15,15 @@ internal sealed class LexemeWalker(IReadOnlyList<Lexeme> lexemes, IEpsilonToken.
     private Position EpsilonAbsolutePosition
         => lexemes.LastOrNone()
             .Match(
-                none: new Position(0, 1, 1, EpsilonLength),
-                some: lexem => new Position(lexem.Position.EndPosition, lexem.Position.Line, lexem.Position.EndColumn, EpsilonLength));
+                none: new Position(LineAnchor.DocumentStart.StartOfLine, EpsilonLength, LineAnchor.DocumentStart),
+                some: lexem => new Position(lexem.Position.EndPosition, EpsilonLength, lexem.Position.LineBeginnig));
 
     public Lexeme Pop()
         => ValidToken()
             ? lexemes[_currentIndex++]
             : CreateEpsilon();
 
-    public Lexeme Peek(int lookAhead = 0)
+    public Lexeme Peek(int lookAhead = NoLookAhead)
     {
         Debug.Assert(lookAhead >= 0, "a negative look ahead is not supported");
 
@@ -31,7 +32,7 @@ internal sealed class LexemeWalker(IReadOnlyList<Lexeme> lexemes, IEpsilonToken.
             : CreateEpsilon();
     }
 
-    private bool ValidToken(int lookAhead = 0)
+    private bool ValidToken(int lookAhead = NoLookAhead)
         => _currentIndex + lookAhead < lexemes.Count;
 
     private Lexeme CreateEpsilon()

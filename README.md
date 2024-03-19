@@ -10,6 +10,13 @@ Can you write a lexer in a single expression? Now you can.
 
 [![NuGet package](https://buildstats.info/nuget/Funcky.Lexer)](https://www.nuget.org/packages/Funcky.Lexer)
 
+## ChangeLog
+
+### Version 2.0
+
+* Performance improved by a factor of 500.
+* Removed ILinePositionCalculator interface and everything related. (The cost of the abstraction was too high.)
+
 ## Example
 
 Here is simple working example how you would write a simple lexer for an arithmetic parser.
@@ -71,7 +78,7 @@ You always start with an empty `LexerRuleBook.Builder` which is already in its d
 
 You can add rules with the following methods:
 
-* `AddRule(Predicate<char> symbolPredicate, Lexeme.Factory createLexeme, int weight = 0)`
+* `AddRule(Predicate<char> symbolPredicate, Lexeme.Factory createLexeme, int weight = DefaultWeight)`
 * `AddSimpleRule<TToken>(string textSymbol)`
 * `AddRuleWithContext(Predicate<char> symbolPredicate, Predicate<IReadOnlyList<Lexeme>> contextPredicate, Lexeme.Factory createLexeme, int weight)`
 * `AddSimpleRuleWithContext<TToken>(string textSymbol, Predicate<IReadOnlyList<Lexeme>> contextPredicate, int weight)`
@@ -125,10 +132,9 @@ But you can also inject your own ILexemeWalker to do such tasks.
 
 In simple lexer scenerios you should be fine with the default implemenations but if you reach the limit of the lexer, there is a simple way to add new unlimited functionality:
 
-You can define your own implementations for `ILexerReader`, `ILinePositionCalculator`, `ILexemeWalker`, `ILexemeBuilder` in complex scenarios where you need more control over the lexing process.
+You can define your own implementations for `ILexerReader`, `ILexemeWalker`, `ILexemeBuilder` in complex scenarios where you need more control over the lexing process.
 
 * `WithLexerReader(ILexerReader.Factory newLexerReader)`
-* `WithLinePositionCalculator(ILinePositionCalculator.Factory newLinePositionCalculator)`
 * `WithLexemeWalker(ILexemeWalker.Factory newLexemeWalker)`
 * `WithLexemeBuilder(ILexemeBuilder.Factory newLexemeBuilder)`
 
@@ -153,7 +159,7 @@ The `ILexemeBuilder` helps you to create the lexeme, it keeps the state and auto
 The most important function to investigate is the `Peek` function. It gives you the current (or any later) character or it will return `Option<char>.None` if you are at the end of the expression.
 
 ```cs
-Option<char> Peek(int lookAhead = 0);
+Option<char> Peek(int lookAhead = NoLookAhead);
 ```
 
 The `Peek` function does not advance the position, to advance the `Position` there are the `Retain()` and `Discard()` methods.
@@ -299,28 +305,11 @@ This is illustrated in this simple example, where we call `Discard()` to advance
 
 The LexerRuleBook sets up the default implementations for: 
 
-* `ILinePositionCalculator`
 * `ILexerReader`
 * `ILexemeWalker`
 * `ILexemeBuilder`
 
 You change them while setting up your `LexerRuleBook` the methods start with `With` and are described in [Configure the complex szenarios](#configure-the-complex-szenarios).
-
-## Create your own ILinePositionCalculator
-
-**Scenario**: the positions are not the way I want them.
-
-The `CalculateLinePosition` is the only method in the interface has only one method the you have to implement which is straight forward.
-
-```cs
-Position CalculateLinePosition(int absolutePosition, int length);
-```
-
-When registering the calculator you have access to the `lexemes`. The `lexemes` is a `IReadOnlyList<Lexeme>` produced before your calculator is created.
-
-```cs
-    .WithLinePositionCalculator(lexemes => new ZeroBasedPositionCalculator(lexemes))
-```
 
 ## Create your own ILexerReader
 
@@ -330,7 +319,7 @@ When registering the calculator you have access to the `lexemes`. The `lexemes` 
 
 ```cs
 int Position { get; }
-Option<char> Peek(int lookAhead = 0);
+Option<char> Peek(int lookAhead = NoLookAhead);
 Option<char> Read();
 ```
 
@@ -349,7 +338,7 @@ When registering the reader you have access to the `expression` as given to the 
 
 ```cs
     Lexeme Pop();
-    Lexeme Peek(int lookAhead = 0);
+    Lexeme Peek(int lookAhead = NoLookAhead);
 ```
 
 When registering the reader you have access to the `lexemes` and the `newEpsilonToken` factory delegate. 
@@ -372,7 +361,7 @@ By replacing the `ILexemeBuilder` you are basically taking control over everythi
 
 The `ILexemeBuilder` is a bit more involved, if you really want to change this implementation refer to the source and the examples in the test.
 
-When registering the `ILexemeBuilder` you have access to the `reader` (of type `ILexerReader`) and the `linePositionCalculator` (of type `ILinePositionCalculator`). 
+When registering the `ILexemeBuilder` you have access to all the internas of the implementation.
 
 This means you have full control to change basically everything.
 

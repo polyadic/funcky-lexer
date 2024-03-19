@@ -1,10 +1,11 @@
 ﻿using System.Text;
 using Funcky.Lexer.Token;
 using Funcky.Monads;
+using static Funcky.Lexer.Constants;
 
 namespace Funcky.Lexer.Test.Mocks;
 
-internal sealed class FakeDigitLexemeBuilder(ILexerReader reader, ILinePositionCalculator linePositionCalculator)
+internal sealed class FakeDigitLexemeBuilder(ILexerReader reader, LineAnchor currentLine)
     : ILexemeBuilder
 {
     private readonly int _startPosition = reader.Position;
@@ -16,12 +17,15 @@ internal sealed class FakeDigitLexemeBuilder(ILexerReader reader, ILinePositionC
     public int Position
         => reader.Position;
 
+    private int Length
+        => reader.Position - _startPosition;
+
     public Lexeme Build(IToken token)
         => new(
             Token: token,
-            Position: linePositionCalculator.CalculateLinePosition(_startPosition, Length()));
+            Position: new Position(_startPosition, Length, currentLine));
 
-    public Option<char> Peek(int lookAhead = 0)
+    public Option<char> Peek(int lookAhead = NoLookAhead)
         => reader.Peek(lookAhead);
 
     public ILexemeBuilder Retain()
@@ -44,9 +48,6 @@ internal sealed class FakeDigitLexemeBuilder(ILexerReader reader, ILinePositionC
 
         return this;
     }
-
-    private int Length()
-        => reader.Position - _startPosition;
 
     private static char TransformDigit(char maybeDigit)
         => char.IsDigit(maybeDigit)

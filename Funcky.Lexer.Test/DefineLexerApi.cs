@@ -15,7 +15,6 @@ public sealed class DefineLexerApi
             .WithEpsilonToken<EpsilonToken>()
             .WithLexemeBuilder(ILexemeBuilder.DefaultFactory)
             .WithLexerReader(ILexerReader.DefaultFactory)
-            .WithLinePositionCalculator(ILinePositionCalculator.DefaultFactory)
             .WithLexemeWalker(ILexemeWalker.DefaultFactory)
             .AddRule(char.IsDigit, ScanNumber)
             .AddRule(char.IsLetter, ScanIdentifier)
@@ -30,21 +29,21 @@ public sealed class DefineLexerApi
 
         Assert.Collection(
             lexemes,
-            lexeme => Assert.Equal(new Lexeme(new NumberToken(40), new Position(0, 1, 1, 2)), lexeme),
-            lexeme => Assert.Equal(new Lexeme(new PlusToken(), new Position(2, 1, 3, 1)), lexeme),
-            lexeme => Assert.Equal(new Lexeme(new NumberToken(20), new Position(3, 1, 4, 2)), lexeme),
-            lexeme => Assert.Equal(new Lexeme(new MultiplicationToken(), new Position(5, 1, 6, 1)), lexeme),
-            lexeme => Assert.Equal(new Lexeme(new NumberToken(6), new Position(6, 1, 7, 1)), lexeme));
+            lexeme => Assert.Equal(new Lexeme(new NumberToken(40), new Position(0, 2, LineAnchor.DocumentStart)), lexeme),
+            lexeme => Assert.Equal(new Lexeme(new PlusToken(), new Position(2, 1, LineAnchor.DocumentStart)), lexeme),
+            lexeme => Assert.Equal(new Lexeme(new NumberToken(20), new Position(3, 2, LineAnchor.DocumentStart)), lexeme),
+            lexeme => Assert.Equal(new Lexeme(new MultiplicationToken(), new Position(5, 1, LineAnchor.DocumentStart)), lexeme),
+            lexeme => Assert.Equal(new Lexeme(new NumberToken(6), new Position(6, 1, LineAnchor.DocumentStart)), lexeme));
 
         ILexemeWalker walker = result.Walker;
 
-        Assert.Equal(new Lexeme(new NumberToken(40), new Position(0, 1, 1, 2)), walker.Pop());
-        Assert.Equal(new Lexeme(new PlusToken(), new Position(2, 1, 3, 1)), walker.Pop());
-        Assert.Equal(new Lexeme(new NumberToken(20), new Position(3, 1, 4, 2)), walker.Pop());
-        Assert.Equal(new Lexeme(new MultiplicationToken(), new Position(5, 1, 6, 1)), walker.Pop());
-        Assert.Equal(new Lexeme(new NumberToken(6), new Position(6, 1, 7, 1)), walker.Pop());
-        Assert.Equal(new Lexeme(new EpsilonToken(), new Position(7, 1, 8, 0)), walker.Pop());
-        Assert.Equal(new Lexeme(new EpsilonToken(), new Position(7, 1, 8, 0)), walker.Pop());
+        Assert.Equal(new Lexeme(new NumberToken(40), new Position(0, 2, LineAnchor.DocumentStart)), walker.Pop());
+        Assert.Equal(new Lexeme(new PlusToken(), new Position(2, 1, LineAnchor.DocumentStart)), walker.Pop());
+        Assert.Equal(new Lexeme(new NumberToken(20), new Position(3, 2, LineAnchor.DocumentStart)), walker.Pop());
+        Assert.Equal(new Lexeme(new MultiplicationToken(), new Position(5, 1, LineAnchor.DocumentStart)), walker.Pop());
+        Assert.Equal(new Lexeme(new NumberToken(6), new Position(6, 1, LineAnchor.DocumentStart)), walker.Pop());
+        Assert.Equal(new Lexeme(new EpsilonToken(), new Position(7, 0, LineAnchor.DocumentStart)), walker.Pop());
+        Assert.Equal(new Lexeme(new EpsilonToken(), new Position(7, 0, LineAnchor.DocumentStart)), walker.Pop());
     }
 
     [Fact]
@@ -66,15 +65,11 @@ public sealed class DefineLexerApi
 
         Assert.Collection(
             result.Lexemes,
-            lexeme => Assert.Equal(new Lexeme(new ClassToken(), new Position(0, 1, 1, 5)), lexeme),
+            lexeme => Assert.Equal(new Lexeme(new ClassToken(), new Position(0, 5, LineAnchor.DocumentStart)), lexeme),
             NoOperation,
             NoOperation,
             NoOperation,
-            lexeme => Assert.Equal(new Lexeme(new OpenParenthesisToken(), new Position(20, 2, 1, 1)), lexeme),
-            NoOperation,
-            NoOperation,
-            NoOperation,
-            NoOperation,
+            lexeme => Assert.Equal(new Lexeme(new OpenParenthesisToken(), new Position(20, 1, new LineAnchor(1, 20))), lexeme),
             NoOperation,
             NoOperation,
             NoOperation,
@@ -83,7 +78,11 @@ public sealed class DefineLexerApi
             NoOperation,
             NoOperation,
             NoOperation,
-            lexeme => Assert.Equal(new Lexeme(new IdentifierToken("class"), new Position(67, 5, 12, 5)), lexeme),
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            NoOperation,
+            lexeme => Assert.Equal(new Lexeme(new IdentifierToken("class"), new Position(67, 5, new LineAnchor(4, 56))), lexeme),
             NoOperation,
             NoOperation,
             NoOperation,
@@ -92,7 +91,7 @@ public sealed class DefineLexerApi
             NoOperation,
             NoOperation,
             NoOperation,
-            lexeme => Assert.Equal(new Lexeme(new ClosedParenthesisToken(), new Position(92, 7, 1, 1)), lexeme));
+            lexeme => Assert.Equal(new Lexeme(new ClosedParenthesisToken(), new Position(92, 1, new LineAnchor(6, 92))), lexeme));
     }
 
     private static Lexeme ScanNumber(ILexemeBuilder builder)

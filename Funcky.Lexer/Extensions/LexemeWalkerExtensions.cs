@@ -1,5 +1,6 @@
 ﻿using Funcky.Lexer.Exceptions;
 using Funcky.Lexer.Token;
+using static Funcky.Lexer.Constants;
 
 namespace Funcky.Lexer.Extensions;
 
@@ -9,7 +10,7 @@ public static class LexemeWalkerExtensions
         where TToken : IToken
         => ConsumeLexeme<TToken>(walker.Pop());
 
-    public static bool NextIs<TType>(this ILexemeWalker walker, int lookAhead = 0)
+    public static bool NextIs<TType>(this ILexemeWalker walker, int lookAhead = NoLookAhead)
         => walker.Peek(lookAhead).Token is TType;
 
     private static Lexeme ConsumeLexeme<TToken>(Lexeme lexeme)
