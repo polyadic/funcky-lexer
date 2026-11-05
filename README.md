@@ -209,7 +209,6 @@ private static Lexeme ScanNumber(ILexemeBuilder builder)
         ? builder.Build(new NumberToken(number))
         : throw new Exception("Could not parse number: " + builder.CurrentToken);
 }
-}
 ```
 
 ## Line position calculation
@@ -289,16 +288,17 @@ The Match function works very similar to the lexeme factory, when the rule match
 This is illustrated in this simple example, where we call `Discard()` to advance the stream only when we create a `Lexeme`.
 
 ```cs
-    public Option<Lexeme> Match(ILexemeBuilder builder)
+public Option<Lexeme> Match(ILexemeBuilder builder)
+{
+    if (builder.Peek() is '=')
     {
-        if (builder.Peek() is '=')
-        {
-            builder.Discard()
+        builder.Discard();
 
-            return builder.Build(new EqualToken())
-        } else {
-            return Option<Lexeme>.None;
-        }
+        return builder.Build(new EqualToken());
+    } else {
+        return Option<Lexeme>.None;
+    }
+}
 ```
 
 ## Change the default implementations.
@@ -337,8 +337,8 @@ When registering the reader you have access to the `expression` as given to the 
 `ILexemeWalker` is usually stateful (track the position and change it on `Pop`) and has two methods to implemlent.
 
 ```cs
-    Lexeme Pop();
-    Lexeme Peek(int lookAhead = NoLookAhead);
+Lexeme Pop();
+Lexeme Peek(int lookAhead = NoLookAhead);
 ```
 
 When registering the reader you have access to the `lexemes` and the `newEpsilonToken` factory delegate. 
