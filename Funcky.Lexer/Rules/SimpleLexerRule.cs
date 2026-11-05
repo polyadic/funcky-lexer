@@ -4,21 +4,16 @@ using Funcky.Monads;
 
 namespace Funcky.Lexer.Rules;
 
-internal sealed class SimpleLexerRule<TToken> : ILexerRule
+internal sealed class SimpleLexerRule<TToken>(string textSymbol) : ILexerRule
     where TToken : IToken, new()
 {
-    private readonly string _textSymbol;
-    private readonly bool _isOperator;
-
-    public SimpleLexerRule(string textSymbol)
-        => (_textSymbol, _isOperator)
-            = (textSymbol, !textSymbol.All(char.IsLetter));
+    private readonly bool _isOperator = !textSymbol.All(char.IsLetter);
 
     public int Weight
-        => _textSymbol.Length;
+        => textSymbol.Length;
 
     public Option<Lexeme> Match(ILexemeBuilder builder)
-        => builder.IsSymbolMatching(_textSymbol) && (_isOperator || builder.HasWordBoundary(_textSymbol)) && builder.ConsumeSymbol(_textSymbol)
+        => builder.IsSymbolMatching(textSymbol) && (_isOperator || builder.HasWordBoundary(textSymbol)) && builder.ConsumeSymbol(textSymbol)
             ? builder.Build(new TToken())
             : Option<Lexeme>.None;
 

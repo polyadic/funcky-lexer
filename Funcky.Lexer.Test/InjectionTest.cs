@@ -7,25 +7,6 @@ namespace Funcky.Lexer.Test;
 public sealed class InjectionTest
 {
     [Fact]
-    public void UseDifferentLinePositionCalculator()
-    {
-        var lineNumber = 42;
-
-        var result = ArithmeticLexerRules.GetRules()
-            .WithLinePositionCalculator(_ => new FixLinePositionCalculator(lineNumber))
-            .Build()
-            .Scan("1337+42*17");
-
-        Assert.NotEmpty(result.Lexemes);
-
-        foreach (var lexeme in result.Lexemes)
-        {
-            // The FixLinePositionCalculator puts everything on line lineNumber
-            Assert.Equal(lineNumber, lexeme.Position.Line);
-        }
-    }
-
-    [Fact]
     public void UseDifferentLexerReader()
     {
         var result = ArithmeticLexerRules.GetRules()
@@ -60,17 +41,17 @@ public sealed class InjectionTest
         // The FakeDigitLexemeBuilder's Retain() call transforms any digit to a '4'
         Assert.Collection(
             result.Lexemes,
-            lexeme => Assert.Equal(new Lexeme(new NumberToken(44), new Position(0, 1, 1, 2)), lexeme),
-            lexeme => Assert.Equal(new Lexeme(new PlusToken(), new Position(2, 1, 3, 1)), lexeme),
-            lexeme => Assert.Equal(new Lexeme(new NumberToken(44), new Position(3, 1, 4, 2)), lexeme),
-            lexeme => Assert.Equal(new Lexeme(new MultiplicationToken(), new Position(5, 1, 6, 1)), lexeme),
-            lexeme => Assert.Equal(new Lexeme(new NumberToken(4), new Position(6, 1, 7, 1)), lexeme));
+            lexeme => Assert.Equal(new Lexeme(new NumberToken(44), new Position(0, 2, LineAnchor.DocumentStart)), lexeme),
+            lexeme => Assert.Equal(new Lexeme(new PlusToken(), new Position(2, 1, LineAnchor.DocumentStart)), lexeme),
+            lexeme => Assert.Equal(new Lexeme(new NumberToken(44), new Position(3, 2, LineAnchor.DocumentStart)), lexeme),
+            lexeme => Assert.Equal(new Lexeme(new MultiplicationToken(), new Position(5, 1, LineAnchor.DocumentStart)), lexeme),
+            lexeme => Assert.Equal(new Lexeme(new NumberToken(4), new Position(6, 1, LineAnchor.DocumentStart)), lexeme));
     }
 
     [Fact]
     public void WhenGivenAPostProcessFunctionTheLexemesAreChangedAccordingly()
     {
-        var sequence = Sequence.Return(new Lexeme(new NumberToken(1337.42), new Position(0, 1, 0, 7)));
+        var sequence = Sequence.Return(new Lexeme(new NumberToken(1337.42), new Position(0, 7, LineAnchor.DocumentStart)));
 
         var result = ArithmeticLexerRules.GetRules()
             .WithPostProcess(_ => sequence)

@@ -1,47 +1,43 @@
 ﻿using System.Text;
 using Funcky.Lexer.Token;
 using Funcky.Monads;
+using static Funcky.Lexer.Constants;
 
 namespace Funcky.Lexer.Test.Mocks;
 
-internal sealed class FakeDigitLexemeBuilder : ILexemeBuilder
+internal sealed class FakeDigitLexemeBuilder(ILexerReader reader, LineAnchor currentLine)
+    : ILexemeBuilder
 {
-    private readonly ILinePositionCalculator _linePositionCalculator;
-    private readonly int _startPosition;
+    private readonly int _startPosition = reader.Position;
     private readonly StringBuilder _stringBuilder = new();
-    private readonly ILexerReader _reader;
-
-    public FakeDigitLexemeBuilder(ILexerReader reader, ILinePositionCalculator linePositionCalculator)
-    {
-        _linePositionCalculator = linePositionCalculator;
-        _startPosition = reader.Position;
-        _reader = reader;
-    }
 
     public string CurrentToken
         => _stringBuilder.ToString();
 
     public int Position
-        => _reader.Position;
+        => reader.Position;
+
+    private int Length
+        => reader.Position - _startPosition;
 
     public Lexeme Build(IToken token)
         => new(
             Token: token,
-            Position: _linePositionCalculator.CalculateLinePosition(_startPosition, Length()));
+            Position: new Position(_startPosition, Length, currentLine));
 
-    public Option<char> Peek(int lookAhead = 0)
-        => _reader.Peek(lookAhead);
+    public Option<char> Peek(int lookAhead = NoLookAhead)
+        => reader.Peek(lookAhead);
 
     public ILexemeBuilder Retain()
     {
-        _ = _reader.Read().Select(TransformDigit).AndThen(_stringBuilder.Append);
+        _ = reader.Read().Select(TransformDigit).AndThen(_stringBuilder.Append);
 
         return this;
     }
 
     public ILexemeBuilder Discard()
     {
-        _reader.Read();
+        reader.Read();
 
         return this;
     }
@@ -52,9 +48,6 @@ internal sealed class FakeDigitLexemeBuilder : ILexemeBuilder
 
         return this;
     }
-
-    private int Length()
-        => _reader.Position - _startPosition;
 
     private static char TransformDigit(char maybeDigit)
         => char.IsDigit(maybeDigit)

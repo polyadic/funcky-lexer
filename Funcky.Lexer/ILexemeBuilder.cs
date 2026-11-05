@@ -1,14 +1,15 @@
 ﻿using Funcky.Lexer.DefaultImplementation;
 using Funcky.Lexer.Token;
 using Funcky.Monads;
+using static Funcky.Lexer.Constants;
 
 namespace Funcky.Lexer;
 
 public interface ILexemeBuilder
 {
-    public static Factory DefaultFactory = (reader, linePositionCalculator) => new LexemeBuilder(reader, linePositionCalculator);
+    public static Factory DefaultFactory = (reader, currentLine) => new LexemeBuilder(reader, currentLine);
 
-    public delegate ILexemeBuilder Factory(ILexerReader lexerReader, ILinePositionCalculator linePositionCalculator);
+    public delegate ILexemeBuilder Factory(ILexerReader lexerReader, LineAnchor currentLine);
 
     /// <summary>
     /// Returns all characters retained as a string.
@@ -24,7 +25,7 @@ public interface ILexemeBuilder
     /// Returns the current (or lookahead number of characters in front of us) character in the string.
     /// </summary>
     /// <param name="lookAhead">Number of characters we want to skip.</param>
-    Option<char> Peek(int lookAhead = 0);
+    Option<char> Peek(int lookAhead = NoLookAhead);
 
     /// <summary>
     /// Creates a Lexeme with the position information, you return the token usually based on the string in CurrentToken.

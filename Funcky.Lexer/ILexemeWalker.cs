@@ -1,5 +1,6 @@
 ﻿using Funcky.Lexer.DefaultImplementation;
 using Funcky.Lexer.Token;
+using static Funcky.Lexer.Constants;
 
 namespace Funcky.Lexer;
 
@@ -18,5 +19,5 @@ public interface ILexemeWalker
     /// Returns the current (or lookahead number of lexemes in front of us) lexeme.
     /// </summary>
     /// <param name="lookAhead">Number of lexemes we want to skip.</param>
-    Lexeme Peek(int lookAhead = 0);
+    Lexeme Peek(int lookAhead = NoLookAhead);
 }

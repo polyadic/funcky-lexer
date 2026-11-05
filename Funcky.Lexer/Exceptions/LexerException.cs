@@ -1,9 +1,3 @@
 ﻿namespace Funcky.Lexer.Exceptions;
 
-public class LexerException : Exception
-{
-    public LexerException(string message)
-        : base(message)
-    {
-    }
-}
+public class LexerException(string message) : Exception(message);

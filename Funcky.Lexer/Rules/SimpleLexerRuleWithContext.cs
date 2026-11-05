@@ -4,28 +4,22 @@ using Funcky.Monads;
 
 namespace Funcky.Lexer.Rules;
 
-internal sealed class SimpleLexerRuleWithContext<TToken> : ILexerRule
+internal sealed class SimpleLexerRuleWithContext<TToken>(
+    string textSymbol,
+    Predicate<IReadOnlyList<Lexeme>> contextPredicate,
+    int weight)
+    : ILexerRule
     where TToken : IToken, new()
 {
-    private readonly Predicate<IReadOnlyList<Lexeme>> _contextPredicate;
-    private readonly string _textSymbol;
-    private readonly bool _isOperator;
+    private readonly bool _isOperator = !textSymbol.All(char.IsLetter);
 
-    public SimpleLexerRuleWithContext(string textSymbol, Predicate<IReadOnlyList<Lexeme>> contextPredicate, int weight)
-    {
-        Weight = weight;
-        _contextPredicate = contextPredicate;
-        _textSymbol = textSymbol;
-        _isOperator = !textSymbol.All(char.IsLetter);
-    }
-
-    public int Weight { get; }
+    public int Weight { get; } = weight;
 
     public Option<Lexeme> Match(ILexemeBuilder builder)
-        => builder.IsSymbolMatching(_textSymbol) && (_isOperator || builder.HasWordBoundary(_textSymbol)) && builder.ConsumeSymbol(_textSymbol)
+        => builder.IsSymbolMatching(textSymbol) && (_isOperator || builder.HasWordBoundary(textSymbol)) && builder.ConsumeSymbol(textSymbol)
            ? builder.Build(new TToken())
             : Option<Lexeme>.None;
 
     public bool IsActive(IReadOnlyList<Lexeme> context)
-        => _contextPredicate(context);
+        => contextPredicate(context);
 }
